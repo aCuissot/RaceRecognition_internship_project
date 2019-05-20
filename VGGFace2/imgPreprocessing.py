@@ -4,6 +4,7 @@ import cv2 as cv
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
+import dlib
 
 TrainSetPath = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train"
 TestSetPath = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\test"
@@ -87,12 +88,31 @@ def cropFace(img, imgId):
 #     imgOut = cropFace(img, imgId)
 
 
-img = cv.imread(TrainSetPath + "\\n000002\\0001_01.jpg")
+img = cv.imread(TrainSetPath + "\\n000002\\0018_01.jpg")
 # cv.imshow("", img)
 # cv.waitKey(0)
 # cv.destroyAllWindows()
-imgfacecrop = cropFace(img, "n000002/0001_01")
+imgfacecrop = cropFace(img, "n000002/0018_01")
 print(imgfacecrop.shape)
 cv.imshow("", imgfacecrop)
 cv.waitKey(0)
 cv.destroyAllWindows()
+
+"""
+# Here we detect simply the face and eyes thanks to haarcascade date
+face_cascade = cv.CascadeClassifier('Data/haar_detection/haarcascade_frontalface_default.xml')
+eye_cascade = cv.CascadeClassifier('Data/haar_detection/haarcascade_eye.xml')
+
+gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+for (x, y, w, h) in faces:
+    cv.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
+    roi_gray = gray[y:y + h, x:x + w]
+    roi_color = img[y:y + h, x:x + w]
+    eyes = eye_cascade.detectMultiScale(roi_gray, 1.3, 5)
+    for (ex, ey, ew, eh) in eyes:
+        cv.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (255, 255, 0), 2)
+cv.imshow('img', img)
+cv.waitKey(0)
+cv.destroyAllWindows()
+"""
