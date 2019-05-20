@@ -4,7 +4,7 @@ import os
 import sys
 
 classesKeys = [ord("1"), ord("2"), ord("3"), ord("4"), ord("5"), ord("6")]
-path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\test"
+path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train"
 
 
 def getImage(index, imgs, f):
@@ -27,16 +27,15 @@ def writeCategoryInXML(file, name, cat):
 
 
 folders = os.listdir(path)
-XML = open("aa1.xml", "w+")
+XML = open("Data/labels/trainLabels1.xml", "w+")
 XML.write("<xml>\n")
 
 print(len(folders))
-folders = folders[5000:6000]
+folders = folders[:200]
 for f in folders:
 
     folderPath = path + "\\" + f
     images = os.listdir(folderPath)
-
 
     index = 0
     while True:

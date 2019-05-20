@@ -17,18 +17,18 @@ def getImage(imgId):
 
 # Loading csv files (take few seconds)
 
-csvIdentityMeta = pd.read_csv("new_identity_meta.csv")
+csvIdentityMeta = pd.read_csv("Data/labels/new_identity_meta.csv")
 
 # Train
-csvBBGroundTruthTrainIds = pd.read_csv("bb_landmark/loose_bb_train.csv").loc[:, "NAME_ID"]
-csvBBGroundTruthTrain = pd.read_csv("bb_landmark/loose_bb_train.csv").set_index("NAME_ID")
-# csvLandmarkGroundTruthTrain = pd.read_csv("bb_landmark/loose_landmark_train.csv")
+csvBBGroundTruthTrainIds = pd.read_csv("Data/bb_landmark/loose_bb_train.csv").loc[:, "NAME_ID"]
+csvBBGroundTruthTrain = pd.read_csv("Data/bb_landmark/loose_bb_train.csv").set_index("NAME_ID")
+# csvLandmarkGroundTruthTrain = pd.read_csv("Data/bb_landmark/loose_landmark_train.csv")
 
 """
 # Test
-csvBBGroundTruthTestIds = pd.read_csv("bb_landmark/loose_bb_test.csv").loc[:, "NAME_ID"]
-csvBBGroundTruthTest = pd.read_csv("bb_landmark/loose_bb_test.csv").set_index("NAME_ID")
-csvLandmarkGroundTruthTest = pd.read_csv("bb_landmark/loose_landmark_test.csv")
+csvBBGroundTruthTestIds = pd.read_csv("Data/bb_landmark/loose_bb_test.csv").loc[:, "NAME_ID"]
+csvBBGroundTruthTest = pd.read_csv("Data/bb_landmark/loose_bb_test.csv").set_index("NAME_ID")
+csvLandmarkGroundTruthTest = pd.read_csv("Data/b_landmark/loose_landmark_test.csv")
 """
 
 print(csvBBGroundTruthTrain.loc[csvBBGroundTruthTrainIds[0], :])

@@ -34,10 +34,10 @@ def parseXML(xmlStr):
     return id, ethnicity
 
 
-train = open("TrainXML.xml", "r")
+train = open("Data/labels/TrainXML.xml", "r")
 trainXML = train.read()
 TrainIdList, TrainEthList = parseXML(trainXML)
-test = open("TestXML.xml", "r")
+test = open("Data/labels/TestXML.xml", "r")
 testXML = test.read()
 TestIdList, TestEthList = parseXML(testXML)
 FullIdList = TrainIdList.copy()
@@ -54,8 +54,8 @@ print(len(FullList))
 sortedId, sortedEth = zip(*FullList)
 print(sortedEth)
 
-csv = io.open("identity_meta.csv", "r", encoding="utf-8")
-csvdst = io.open("new_identity_meta.csv", "w", encoding="utf-8")
+csv = io.open("Data/labels/identity_meta.csv", "r", encoding="utf-8")
+csvdst = io.open("Data/labels/new_identity_meta.csv", "w", encoding="utf-8")
 
 header = csv.readline()
 header = header[:len(header) - 1]

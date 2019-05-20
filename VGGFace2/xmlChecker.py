@@ -48,7 +48,7 @@ def parseXML(xmlStr):
 category = 3
 
 folders = os.listdir(path)
-XML = open("TrainXML.xml", "r")
+XML = open("Data/labels/TrainXML.xml", "r")
 content = XML.read()
 idData, ethnicityData = parseXML(content)
 

@@ -17,6 +17,6 @@ for i in range(1, 9280):
     XML += "</subject>\n"
 XML += "</base>\n"
 
-f = open("XML.xml", "w")
+f = open("Data/labels/XML.xml", "w")
 f.write(XML)
 f.close()
