@@ -4,7 +4,7 @@ import cv2 as cv
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
-import dlib
+# import dlib
 
 TrainSetPath = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train"
 TestSetPath = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\test"
@@ -58,30 +58,30 @@ def getPrimarySquareSize(shape, bb):
 
 def cropFace(img, imgId):
     shape = img.shape
-    print(shape)
+    # print(shape)
     bb = csvBBGroundTruthTrain.loc[imgId, :]
-    print(bb)
+    # print(bb)
     primarySquareSize = getPrimarySquareSize(shape, bb)
-    print(primarySquareSize)
+    # print(primarySquareSize)
     topleft = [int(bb[0] - ((primarySquareSize - bb[2]) / 2) - (0.2 * primarySquareSize)),
                int(bb[1] - ((primarySquareSize - bb[3]) / 2) - (0.2 * primarySquareSize))]
     botright = [int(bb[0] + primarySquareSize - ((primarySquareSize - bb[2]) / 2) + (0.2 * primarySquareSize)),
                 int(bb[1] + primarySquareSize - ((primarySquareSize - bb[3]) / 2) + (0.2 * primarySquareSize))]
-    print(topleft)
-    print(botright)
+    # print(topleft)
+    # print(botright)
     topleft[0] = max(topleft[0], 0)
     topleft[1] = max(topleft[1], 0)
     botright[0] = min(botright[0], shape[0])
     botright[1] = min(botright[1], shape[1])
-    print(topleft)
-    print(botright)
-    out = img.copy()
-    cv.rectangle(out, (topleft[0], topleft[1]), (botright[0], botright[1]), (255, 0, 0), 3)
-    cv.rectangle(out, (bb[0], bb[1]), (bb[0] + bb[2], bb[1] + bb[3]), (0, 255, 0), 3)
-    out = out[topleft[1]:botright[1], topleft[0]:botright[0]]
+    # print(topleft)
+    # print(botright)
+    # out = img.copy()
+    # cv.rectangle(out, (topleft[0], topleft[1]), (botright[0], botright[1]), (255, 0, 0), 3)
+    # cv.rectangle(out, (bb[0], bb[1]), (bb[0] + bb[2], bb[1] + bb[3]), (0, 255, 0), 3)
+    # out = out[topleft[1]:botright[1], topleft[0]:botright[0]]
 
-    return out
-
+    # return out
+    return img[topleft[1]:botright[1], topleft[0]:botright[0]]
 
 # for imgId in csvBBGroundTruthTrainIds:
 #     img = getImage(imgId)
