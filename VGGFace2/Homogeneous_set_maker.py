@@ -4,13 +4,7 @@ import os
 import sys
 import random
 
-classesKeys = [ord("0"), ord("1")]
-path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train"
-
-
-def getImage(index, imgs, f):
-    imgPath = path + "\\" + f + "\\" + imgs[index]
-    return cv.imread(imgPath)
+path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\test"
 
 
 def getId(list):
@@ -47,7 +41,7 @@ def parseXML(xmlStr):
 
 
 folders = os.listdir(path)
-XML = open("Data/labels/TrainXML.xml", "r")
+XML = open("Data/labels/TestXML.xml", "r")
 content = XML.read()
 idData, ethnicityData = parseXML(content)
 
@@ -74,7 +68,7 @@ for category in range(4):
 print(finalset)
 random.shuffle(finalset)
 print(finalset)
-listSave = open("Data/labels/homogeneousSetIds.txt", "w")
+listSave = open("Data/labels/homogeneousTestSetIds.txt", "w")
 txt = ""
 for id in finalset:
     txt += id + "\n"
