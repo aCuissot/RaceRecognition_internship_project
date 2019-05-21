@@ -1,4 +1,6 @@
 import os
+
+import keras
 from keras.preprocessing import image
 import numpy as np
 import cv2 as cv
@@ -52,7 +54,18 @@ def preprocessing(model, img_name, img_path):
         targetSize = (331, 331)
     img = cv.imread(img_path)
     img = cropFace(img, img_name)
-    return cv.resize(img, targetSize)
+    img = cv.resize(img, targetSize)
+    x = image.img_to_array(img)
+    x = np.expand_dims(x, axis=0)
+    if model == 'mobilenet':
+        x = keras.applications.mobilenet.preprocess_input(x)
+    elif model == 'resnet':
+        x = keras.applications.resnet50.preprocess_input(x)
+    elif model == 'vgg16':
+        x = keras.applications.vgg16.preprocess_input(x)
+    elif model == 'nasnet':
+        x = keras.applications.nasnet.preprocess_input(x)
+    return x
 
 
 def loadImages(model, trainBool=True):
@@ -62,18 +75,18 @@ def loadImages(model, trainBool=True):
 
     X_train = []
     folders = os.listdir(path)
-
+    folders = folders[:200]
+    index = 0
     for f in folders:
         folderPath = path + "\\" + f
         images = os.listdir(folderPath)
-
+        index += 1
+        if index % 10 == 0:
+            print(index / 2)
         for imageName in images:
             image_path = folderPath + "\\" + imageName
             newImage = preprocessing(model, f + "/" + imageName.split(".")[0], image_path)
-            # cv.imshow("", newImage)
-            # cv.waitKey(0)
-            # cv.destroyAllWindows()
-            X_train.append(newImage)
+            X_train.append(newImage)  # bad idea
 
 
 loadImages('')
