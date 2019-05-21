@@ -299,7 +299,7 @@ def data_generator_epsilonerror(csvpath):
     np.random.shuffle(p)
 
     for row in p:
-        path = "C:/Users/Enrico/Desktop/tirocinio/ALL/TestDataset/ChalearnVolti/" + row[2]
+        path = "C:/Users/Enrico/Desktop/tirocinio/ALL/TestDataset/ChalearnVolti/" + row[2]  # Chalearn Volti = Sad Face
         image = cv2.imread(path)
 
         img = image[ny:ny + nr, nx:nx + nr]
@@ -333,9 +333,9 @@ for i in data:
 
     pred = mobile_model_multitask.predict(arrimg)
 
-    print("Età stimata:  " + str(pred[1][0][0]))
-    print("Età effettiva:  " + str(age))
-    print("Varianza : " + str(var))
+    print("Age esrimated:  " + str(pred[1][0][0]))
+    print("Real age:  " + str(age))
+    print("Variance : " + str(var))
     print("\n\n")
     if var == 0.0:
         continue

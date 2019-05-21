@@ -1,13 +1,14 @@
 import os
 
-import keras
-from keras.utils import Sequence, multi_gpu_model
-from keras.preprocessing import image
-import numpy as np
 import cv2 as cv
+import keras
+import numpy as np
 import pandas as pd
-from keras_applications.vgg16 import VGG16
-from keras_applications.xception import Xception
+from keras import Sequential
+from keras.preprocessing import image
+from keras.utils import Sequence
+from skimage.io import imread
+from skimage.transform import resize
 
 csvBBGroundTruthTrainIds = pd.read_csv("../Data/bb_landmark/loose_bb_train.csv").loc[:, "NAME_ID"]
 csvBBGroundTruthTrain = pd.read_csv("../Data/bb_landmark/loose_bb_train.csv").set_index("NAME_ID")
@@ -25,34 +26,23 @@ def getPrimarySquareSize(shape, bb):
 
 def cropFace(img, imgId):
     shape = img.shape
-    # print(shape)
     bb = csvBBGroundTruthTrain.loc[imgId, :]
-    # print(bb)
     primarySquareSize = getPrimarySquareSize(shape, bb)
-    # print(primarySquareSize)
     topleft = [int(bb[0] - ((primarySquareSize - bb[2]) / 2) - (0.2 * primarySquareSize)),
                int(bb[1] - ((primarySquareSize - bb[3]) / 2) - (0.2 * primarySquareSize))]
     botright = [int(bb[0] + primarySquareSize - ((primarySquareSize - bb[2]) / 2) + (0.2 * primarySquareSize)),
                 int(bb[1] + primarySquareSize - ((primarySquareSize - bb[3]) / 2) + (0.2 * primarySquareSize))]
-    # print(topleft)
-    # print(botright)
+
     topleft[0] = max(topleft[0], 0)
     topleft[1] = max(topleft[1], 0)
     botright[0] = min(botright[0], shape[0])
     botright[1] = min(botright[1], shape[1])
-    # print(topleft)
-    # print(botright)
-    # out = img.copy()
-    # cv.rectangle(out, (topleft[0], topleft[1]), (botright[0], botright[1]), (255, 0, 0), 3)
-    # cv.rectangle(out, (bb[0], bb[1]), (bb[0] + bb[2], bb[1] + bb[3]), (0, 255, 0), 3)
-    # out = out[topleft[1]:botright[1], topleft[0]:botright[0]]
 
-    # return out
     return img[topleft[1]:botright[1], topleft[0]:botright[0]]
 
 
 def preprocessing(model, img_name, img_path):
-    targetSize = (224, 224)  # works for mobilenet, resnet and vgg16
+    targetSize = (224, 224)  # size for mobilenet, resnet and vgg16
     if model == 'nasnet':
         targetSize = (331, 331)
     img = cv.imread(img_path)
@@ -68,6 +58,10 @@ def preprocessing(model, img_name, img_path):
         x = keras.applications.vgg16.preprocess_input(x)
     elif model == 'nasnet':
         x = keras.applications.nasnet.preprocess_input(x)
+    else:
+        raise Exception(
+            'model parameter have to be \'mobilenet\', \'resnet\', \'vgg16\' or \'nasnet\', here it is : {}'.format(
+                model))
     return x
 
 
@@ -90,10 +84,6 @@ def loadImages(model, trainBool=True):
             image_path = folderPath + "\\" + imageName
             newImage = preprocessing(model, f + "/" + imageName.split(".")[0], image_path)
             X_train.append(newImage)  # bad idea
-
-
-from skimage.io import imread
-from skimage.transform import resize
 
 
 class My_Generator(Sequence):
@@ -138,6 +128,7 @@ def getEthListFromFile(file):
     ethList = []
     for line in file:
         ethList.append(line)
+    return ethList
 
 
 trainLabels = open('../Data/labels/homogeneousTrainLabels.txt', "r")
@@ -149,7 +140,7 @@ GT_validation = getEthListFromFile(testLabels)
 my_training_batch_generator = My_Generator(training_filenames, GT_training, batch_size)
 my_validation_batch_generator = My_Generator(validation_filenames, GT_validation, batch_size)
 
-model = VGG16(weights=None)
+model = Sequential()
 
 model.fit_generator(generator=my_training_batch_generator,
                     steps_per_epoch=(num_training_samples // batch_size),

@@ -123,9 +123,9 @@ def data_generator_prepr(csvpath, size):
                 yield (im_p, gender)
 
 
-train_generator = data_generator_prepr('trainCompleto.csv', batch_size)
-val_generator = data_generator_prepr('valCompleto.csv', batch_size)
-test_generator = data_generator_prepr('testCompleto.csv', 1)
+train_generator = data_generator_prepr('../csvVggDataset2/trainCompleto.csv', batch_size)
+val_generator = data_generator_prepr('../csvVggDataset2/valCompleto.csv', batch_size)
+test_generator = data_generator_prepr('../csvVggDataset2/testCompleto.csv', 1)
 
 model = keras.applications.mobilenet.MobileNet(input_shape=(224, 224, 3))
 # model.summary()
@@ -151,7 +151,7 @@ for layer in mobile_model.layers:
     layer.trainable = True
     i = i + 1
 
-print("Numero di layer: " + str(i))
+print("Layer number: " + str(i))
 
 learning_rate_multipliers = {}
 learning_rate_multipliers['conv1'] = 0.01

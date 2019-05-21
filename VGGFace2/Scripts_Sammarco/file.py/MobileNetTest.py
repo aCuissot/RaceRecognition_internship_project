@@ -138,12 +138,12 @@ def data_generator_prepr_crop20(csvpath, size):
 
         for i in data:
 
-            immagine = i[0]
-            if immagine.shape != (200, 200, 3):
-                immagine = cv2.resize(immagine, (200, 200), 0, 0, cv2.INTER_LINEAR)
+            img = i[0]
+            if img.shape != (200, 200, 3):
+                img = cv2.resize(img, (200, 200), 0, 0, cv2.INTER_LINEAR)
 
-            immagine = immagine[ny:ny + nr, nx:nx + nr]
-            image = cv2.resize(immagine, IMAGE_SIZE, 0, 0, cv2.INTER_LINEAR)
+            img = img[ny:ny + nr, nx:nx + nr]
+            image = cv2.resize(img, IMAGE_SIZE, 0, 0, cv2.INTER_LINEAR)
             image = image.astype(np.float32)
             image /= 255
 
@@ -205,7 +205,7 @@ for layer in mobile_model.layers:
     layer.trainable = True
     i = i + 1
 
-print("Numero di layer: " + str(i))
+print("Layer Number: " + str(i))
 
 learning_rate_multipliers = {}
 learning_rate_multipliers['conv1'] = 0.01

@@ -352,7 +352,7 @@ def data_generator_test(csvpath, size, pathimg):
 
 
 print(
-    "Nota: in caso di test set con 1 solo tipo di label la rete da comunque dei risultati sulla label mancante ma bisogna ignorarli")
+    "Note: in the case of a test set with only 1 type of label, the network gives results on the missing label but ignore them")
 
 test_size = 1054
 csv1 = 'C:/Users/Enrico/Desktop/tirocinio/ALL/csv/chalearnlap2016_nonAll_validation.csv'
@@ -361,7 +361,7 @@ pathimg = "C:/Users/Enrico/Desktop/tirocinio/ALL/TestDataset/ChalearnVolti/"
 test_generator = data_generator_test(csv1, 1, pathimg)
 
 scores = mobile_model_multitask.evaluate_generator(test_generator, steps=test_size, verbose=1)
-print("Risultati su ChaLearnLap - validation")
+print("Results of ChaLearnLap - validation")
 for i in range(0, len(mobile_model_multitask.metrics_names)):
     print(mobile_model_multitask.metrics_names[i] + " :  " + str(scores[i]))
 print("\n")
@@ -385,7 +385,7 @@ pathimg = "C:/Users/Enrico/Desktop/tirocinio/ALL/TestDataset/TestUnisaNuovoForma
 test_generator = data_generator_test(csv1, 1, pathimg)
 
 scores = mobile_model_multitask.evaluate_generator(test_generator, steps=test_size, verbose=1)
-print("Risultati su Unisa Private")
+print("Results su Unisa Private")
 for i in range(0, len(mobile_model_multitask.metrics_names)):
     print(mobile_model_multitask.metrics_names[i] + " :  " + str(scores[i]))
 print("\n")
@@ -396,7 +396,7 @@ pathimg = "C:/Users/Enrico/Desktop/tirocinio/ALL/TestDataset/TestUnisaNuovoForma
 test_generator = data_generator_test(csv1, 1, pathimg)
 
 scores = mobile_model_multitask.evaluate_generator(test_generator, steps=test_size, verbose=1)
-print("Risultati su Unisa Public")
+print("Results su Unisa Public")
 for i in range(0, len(mobile_model_multitask.metrics_names)):
     print(mobile_model_multitask.metrics_names[i] + " :  " + str(scores[i]))
 print("\n")

@@ -13,5 +13,6 @@ In the bb_landmark folder, we got ground truth for the face (`loose_bb_*.csv`) a
 ![alt text](Data/ReadMe_Data/landmarks_example.png "landmarks example")
 ![alt text](Data/ReadMe_Data/bb_example.png "bb example")
 
-Lab gives me some scripts done by other students (`Script_*` folders)
+Lab gave me some scripts done by other students (`Script_*` folders)
 
+In `Data/labels`, `homgeneous*.txt` are subsets of train and test sets containing the same number of each ethnicity to perform a better learning.
