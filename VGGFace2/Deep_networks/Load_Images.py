@@ -120,77 +120,31 @@ num_training_samples = 1868
 num_validation_samples = 76
 
 
-def getIdsFromFile(file, FullPath):
+def getIDsFromFile(file, FullPath):
     idsList = []
-    if (FullPath != ""):
-        for line in file:
-            idsList.append(FullPath + "\\" + line)
-    else:
-        for line in file:
-            idsList.append(line)
+    for line in file:
+        idsList.append(FullPath + "\\" + line)
     return idsList
 
 
 trainSetIds = open('../Data/labels/homogeneousTrainSetIds.txt', "r")
 testSetIds = open('../Data/labels/homogeneousTestSetIds.txt', "r")
-training_filenames = getIdsFromFile(trainSetIds, "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train")
+training_filenames = getIDsFromFile(trainSetIds, "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train")
 
-validation_filenames = getIdsFromFile(testSetIds, "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train")
-
-
-def getId(list):
-    sublist = []
-    n = len(list)
-    for i in range(0, n, 2):
-        sublist.append(list[i])
-    return sublist
+validation_filenames = getIDsFromFile(testSetIds, "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train")
 
 
-def getEthnicity(list):
-    sublist = []
-    n = len(list)
-    for i in range(1, n, 2):
-        sublist.append(list[i])
-    return sublist
+def getEthListFromFile(file):
+    ethList = []
+    for line in file:
+        ethList.append(line)
 
 
-def parseXML(xmlStr):
-    xmlStr = xmlStr.replace("<xml>\n", "")
-    xmlStr = xmlStr.replace("</xml>", "")
-    xmlStr = xmlStr.replace("<subject>\n", "")
-    xmlStr = xmlStr.replace("</subject>\n", "")
+trainLabels = open('../Data/labels/homogeneousTrainLabels.txt', "r")
+testLabels = open('../Data/labels/homogeneousTestLabels.txt', "r")
 
-    xmlStr = xmlStr.replace("<id>", "")
-    xmlStr = xmlStr.replace("<ethnicity>", "")
-    xmlStr = xmlStr.replace("</id>", "")
-    xmlStr = xmlStr.replace("</ethnicity>", "")
-
-    list = xmlStr.split("\n")
-    id = getId(list)
-    ethnicity = getEthnicity(list)
-    return id, ethnicity
-
-
-XMLtrain = open("../Data/labels/TrainXML.xml", "r")
-XMLtest = open("../Data/labels/TestXML.xml", "r")
-
-trainContent = XMLtrain.read()
-idData, ethnicityData = parseXML(trainContent)
-testContent = XMLtest.read()
-idDataTest, ethnicityDataTest = parseXML(testContent)
-idLabelListTrain = [idData, ethnicityData]
-idLabelListTest = [idDataTest, ethnicityDataTest]
-
-def mkGT(idList2LabelList, idLabelList):
-    labels = []
-    for i in idList2LabelList:
-        labels.append(idLabelList[1][idLabelList[0].index(i)])
-    return labels
-
-
-
-GT_training = mkGT(getIdsFromFile(trainSetIds, ""), idLabelListTrain)
-GT_validation = mkGT(getIdsFromFile(testSetIds, ""), idLabelListTest)
+GT_training = getEthListFromFile(trainLabels)
+GT_validation = getEthListFromFile(testLabels)
 
 my_training_batch_generator = My_Generator(training_filenames, GT_training, batch_size)
 my_validation_batch_generator = My_Generator(validation_filenames, GT_validation, batch_size)
