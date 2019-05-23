@@ -88,7 +88,7 @@ def showProportion(ethnicityData):
 
 # showProportion(ethnicityData)
 
-folders = folders[5000:6000]
+folders = folders[6000:7000]
 
 for f in folders:
 
