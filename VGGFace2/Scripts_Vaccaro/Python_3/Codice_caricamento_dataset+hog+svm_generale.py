@@ -1,32 +1,28 @@
 # coding: utf-8
 
 
-import matplotlib.pyplot as plt
-import matplotlib as mt
 import csv
 import pickle
-import sys
-import dlib
+
 import cv2
 import numpy as np
-import os
 
-# Loading cvs file in 'etic'
+# Loading cvs file in 'labs'
 
-etic = []
+labs = []
 with open('nomecsv.csv', newline='') as csvfile:
-    etichetta2 = csv.reader(csvfile, delimiter=',', quotechar='|')
-    for row in etichetta2:
-        etic.append(row)
+    labels2 = csv.reader(csvfile, delimiter=',', quotechar='|')
+    for row in labels2:
+        labs.append(row)
 
 # Using relative path
-# etic[n][2] means taking the 2nd cell of the row or rather the path
+# labs[n][2] means taking the 2nd cell of the row or rather the path
 # some csv (like Chalearn) don't have gender information, so they have 2 cells per line and not 3
 
 filenames = []
-leng = len(etic)
+leng = len(labs)
 for n in range(0, leng):
-    filenames.append(etic[n][2])
+    filenames.append(labs[n][2])
 
 # These are parameters for "cutting" an image with a 40% margin.
 x = 51
@@ -71,7 +67,7 @@ for images in filenames:
         X_hog.append(hogghy)
 
         # Note that here I take only the gender (the first cell of the line)
-        y.append(int(etic[n][0]))
+        y.append(int(labs[n][0]))
     n = n + 1
 
 # Saving hog and labels in pkl file
@@ -84,34 +80,21 @@ for images in filenames:
 
 # Save the weight in a pkl.
 
-with open("nomehog.pkl", "wb") as output:
+with open("namehog.pkl", "wb") as output:
     pickle.dump(X_hog, output)
 
-with open("nomeetichetta.pkl", "wb") as output:
+with open("namelabel.pkl", "wb") as output:
     pickle.dump(y, output)
 
 # AN EXAMPLE OF TRAINING WITH VGG
 
 
-import random
-import deap
-from sklearn.model_selection import StratifiedKFold
-from sklearn.model_selection import RandomizedSearchCV
 # from sklearn_deap_master.evolutionary_search import EvolutionaryAlgorithmSearchCV
-from sklearn.model_selection import cross_validate
-from sklearn.model_selection import cross_val_predict
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import cross_val_score
 from sklearn import svm
-from sklearn.metrics import classification_report
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import GridSearchCV
 
-
-with open("nomehog.pkl", "rb") as data:
+with open("namehog.pkl", "rb") as data:
     Hog = pickle.load(data)
-with open("nomeetichetta.pkl", "rb") as data:
+with open("namelabel.pkl", "rb") as data:
     y = pickle.load(data)
 
 # Initiate vectors (useless here)

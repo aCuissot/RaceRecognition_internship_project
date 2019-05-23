@@ -1,36 +1,19 @@
-# coding: utf-8
-
-
-import random
-import deap
-import math
-from sklearn.model_selection import StratifiedKFold
-from sklearn.model_selection import RandomizedSearchCV
-from sklearn.model_selection import cross_validate
-from sklearn.model_selection import cross_val_predict
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import cross_val_score
-from sklearn import svm
-from sklearn.metrics import classification_report
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import GridSearchCV
-import matplotlib.pyplot as plt
-import matplotlib as mt
-import csv
 import pickle
-import sys
-import cv2
+import random
+
 import gc
+import math
 import numpy as np
-import os
+from sklearn import svm
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import StratifiedKFold
 
 # Hog contain hog and y contain label
 
-with open("nome_hog.pkl", "rb") as data:
+with open("name_hog.pkl", "rb") as data:
     Hog = pickle.load(data)
 
-with open("nome_etichetta.pkl", "rb") as data:
+with open("name_label.pkl", "rb") as data:
     y = pickle.load(data)
 
 # Lauching shuffle (optional)
@@ -95,9 +78,9 @@ def middle_error(prevision, ground_truth):
     for i in range(0, len(prevision)):
         error = (int(prevision[i]) - ground_truth[i])
         if error < 0:
-            error = error * (-1)
-        middle_error = middle_error + error
-    middle_error = middle_error / len(prevision)
+            error *= -1
+        middle_error += error
+    middle_error /= len(prevision)
     return middle_error
 
 
@@ -110,13 +93,13 @@ def middle_error_per_age(prevision, ground_truth):
     for i in range(0, len(prevision)):
         error = (int(prevision[i]) - ground_truth[i])
         if error < 0:
-            error = error * (-1)
-        if (ground_truth[i] > 0 and ground_truth[i] < len(middle_error)):
+            error *= -1
+        if 0 < ground_truth[i] < len(middle_error):
             middle_error[int(ground_truth[i]) - 1][1] += error
             middle_error[int(ground_truth[i]) - 1][2] += 1
     for i in range(0, len(middle_error)):
-        if (middle_error[i][2] > 0 and middle_error[i][1] > 0):
-            middle_error[i][1] = middle_error[i][1] / middle_error[i][2]
+        if middle_error[i][2] > 0 and middle_error[i][1] > 0:
+            middle_error[i][1] /= middle_error[i][2]
     result = [[0 for x in range(3)] for y in range(len(middle_error))]
     for i in range(0, len(middle_error)):
         result[i][0] = (int(middle_error[i][0]))
@@ -140,17 +123,17 @@ def biggest_errors(middle_error_age, mid):
 
 # Function for bands division, division in 4 bands defined by A, B and C (here hardcoded)
 
-def score_per_fasce(prevision, ground_truth):
+def score_per_band(prevision, ground_truth):
     # Support parameters
     ok = 0
-    minore = 0
-    g_a = 0
-    adulto = 0
-    anziano = 0
-    e_minore = 0
-    e_g_a = 0
-    e_adulto = 0
-    e_anziano = 0
+    young = 0
+    early_adult = 0
+    adult = 0
+    elder = 0
+    e_young = 0
+    e_early_adult = 0
+    e_adult = 0
+    e_elder = 0
 
     # Band 1 : 0 <= x < A
     # Band 2 : A <= x < B
@@ -164,63 +147,63 @@ def score_per_fasce(prevision, ground_truth):
 
         if ground_truth[i] < A:
             truth = 'young'
-        elif ground_truth[i] >= A and ground_truth[i] < B:
+        elif A <= ground_truth[i] < B:
             truth = 'early adult'
-        elif ground_truth[i] >= B and ground_truth[i] < C:
+        elif B <= ground_truth[i] < C:
             truth = 'adult'
         elif ground_truth[i] >= C:
             truth = 'elder'
 
         if prevision[i] < A:
             test = 'young'
-        elif prevision[i] >= A and prevision[i] < B:
+        elif A <= prevision[i] < B:
             test = 'early adult'
-        elif prevision[i] >= B and prevision[i] < C:
+        elif B <= prevision[i] < C:
             test = 'adult'
         elif prevision[i] >= C:
             test = 'elder'
 
         # The following code calculates correct decisions and errors for bands.
         if truth == test:
-            if (truth == 'young'):
-                minore = minore + 1
-            elif (truth == 'early adult'):
-                g_a = g_a + 1
-            elif (truth == 'adult'):
-                adulto = adulto + 1
-            elif (truth == 'elder'):
-                anziano = anziano + 1
+            if truth == 'young':
+                young += 1
+            elif truth == 'early adult':
+                early_adult += 1
+            elif truth == 'adult':
+                adult += 1
+            elif truth == 'elder':
+                elder += 1
 
         if truth != test:
-            if (truth == 'young'):
-                e_minore = e_minore + 1
-            elif (truth == 'early adulto'):
-                e_g_a = e_g_a + 1
-            elif (truth == 'adult'):
-                e_adulto = e_adulto + 1
-            elif (truth == 'elder'):
-                e_anziano = e_anziano + 1
+            if truth == 'young':
+                e_young += 1
+            elif truth == 'early adult':
+                e_early_adult += 1
+            elif truth == 'adult':
+                e_adult += 1
+            elif truth == 'elder':
+                e_elder += 1
 
     # Creating a vector whose first 4 elements indicate the correct decisions, respectively of the 1, 2, 3 and 4 range.
     # The following 4 elements indicate the wrong decisions, in the order of band 1,2,3,4.
     score = [0 for x in range(8)]
-    score[0] = minore
-    score[1] = g_a
-    score[2] = adulto
-    score[3] = anziano
-    score[4] = e_minore
-    score[5] = e_g_a
-    score[6] = e_adulto
-    score[7] = e_anziano
+    score[0] = young
+    score[1] = early_adult
+    score[2] = adult
+    score[3] = elder
+    score[4] = e_young
+    score[5] = e_early_adult
+    score[6] = e_adult
+    score[7] = e_elder
     return score
 
 
 # calcul of score.
-def errore_fasce(score, leng):
+def bands_error(score, leng):
     ris = 0
     for i in range(0, 4):
         ris += score[i]
-    ris = ris / leng
+    ris /= leng
     return ris
 
 
@@ -246,41 +229,41 @@ print('\n')
 
 # Errors per bands
 
-score_fasce = score_per_fasce(test, Y_vali)
-print(score_fasce)
+score_bands = score_per_band(test, Y_vali)
+print(score_bands)
 print('\n')
 print('------------------------------------------------------------------------------------------------------------')
 print('\n')
 
 # Print the score taking the bands into consideration.
-err_fasce = errore_fasce(score_fasce, len(test))
-print(err_fasce)
+err_bands = bands_error(score_bands, len(test))
+print(err_bands)
 
 
 # Calculation of the epsilon error.
 
-def epsilon_error(prevision, ground_truth, varianza):
-    somma = 0
+def epsilon_error(prevision, ground_truth, variance):
+    sum = 0
     leng = 0
     for i in range(0, len(prevision)):
         diff = prevision[i] - ground_truth[i]
-        var = float(varianza[i])
-        if (var != 0):
+        var = float(variance[i])
+        if var != 0:
             esp = (diff ** 2) / (2 * (var ** 2))
             espneg = -esp
             epsilon = 1 - math.exp(espneg)
-            somma = somma + epsilon
-            leng = leng + 1
-    res = somma / leng
+            sum += epsilon
+            leng += 1
+    res = sum / leng
     return res
 
 
 # saving classifiers
 from sklearn.externals import joblib
 
-joblib.dump(svr, 'svr_nome.pkl')
+joblib.dump(svr, 'svr_name.pkl')
 
-# ---------------------------------------------------GridSearch - -------------------------------------------------------------
+# ---------------------------------------------------GridSearch - ------------------------------------------------------
 
 
 tuned_parameters = [{'kernel': ['rbf'], 'C': [500, 1500], 'gamma': [0.1]}]
@@ -314,13 +297,13 @@ print()
 # print()
 
 
-# ---------------------------------------------------GA - ---------------------------------------------------------------------
+# ---------------------------------------------------GA - --------------------------------------------------------------
 
 
 # Study GA
 # this is the parameter list:
 paramgrid = {"kernel": ["rbf"], "C": np.logspace(-9, 9, num=25, base=10), "gamma": np.logspace(-9, 9, num=25, base=10)}
-
+# ? from evolutionary_search import EvolutionaryAlgorithmSearchCV
 res = EvolutionaryAlgorithmSearchCV(estimator=svm.SVR(epsilon=4),
                                     params=paramgrid,
                                     scoring="accuracy",
@@ -333,38 +316,38 @@ res = EvolutionaryAlgorithmSearchCV(estimator=svm.SVR(epsilon=4),
 res.fit(X_train_hog, Y_train)
 res.best_estimator_, res.best_score_, res.best_params_
 
-# -------------------------------------------------TEST - ---------------------------------------------------------------------
+# -------------------------------------------------TEST - --------------------------------------------------------------
 
 
 # Test example
 # Taking hog, age label and variance label
 
-with open("hog_nome.pkl", "rb") as data:
-    Hog_prova = pickle.load(data)
+with open("hog_name.pkl", "rb") as data:
+    Hog_test = pickle.load(data)
 
-with open("y_nome.pkl", "rb") as data:
-    y_prova = pickle.load(data)
+with open("y_name.pkl", "rb") as data:
+    y_test = pickle.load(data)
 
-with open("y_nome.pkl", "rb") as data:
+with open("y_name.pkl", "rb") as data:
     y_var = pickle.load(data)
 
 # Calc score
-mscore = svr.score(Hog_prova, y_prova)
+mscore = svr.score(Hog_test, y_test)
 print(mscore)
 
 # calc score and printing prediction
-test = svr.predict(Hog_prova)
+test = svr.predict(Hog_test)
 print(test)
-print(y_prova)
+print(y_test)
 
 # I apply the functions described above, plus the epsilon error in addition
 
-mid_error = middle_error(test, y_prova)
+mid_error = middle_error(test, y_test)
 print(mid_error)
 print('\n')
 print('------------------------------------------------------------------------------------------------------------')
 print('\n')
-mid_error_age = middle_error_per_age(test, y_prova)
+mid_error_age = middle_error_per_age(test, y_test)
 print(mid_error_age)
 print('\n')
 print('------------------------------------------------------------------------------------------------------------')
@@ -374,15 +357,15 @@ print(big_errors)
 print('\n')
 print('------------------------------------------------------------------------------------------------------------')
 print('\n')
-score_fasce = score_per_fasce(test, y_prova)
-print(score_fasce)
+score_bands = score_per_band(test, y_test)
+print(score_bands)
 print('\n')
 print('------------------------------------------------------------------------------------------------------------')
 print('\n')
-err_fasce = errore_fasce(score_fasce, len(test))
-print(err_fasce)
+err_bands = bands_error(score_bands, len(test))
+print(err_bands)
 print('\n')
 print('------------------------------------------------------------------------------------------------------------')
 print('\n')
-epsilon = epsilon_error(test, y_prova, y_var)
+epsilon = epsilon_error(test, y_test, y_var)
 print(epsilon)

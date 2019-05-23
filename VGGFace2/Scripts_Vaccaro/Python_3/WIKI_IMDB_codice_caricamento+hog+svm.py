@@ -1,32 +1,27 @@
 # coding: utf-8
-
-
-import matplotlib.pyplot as plt
-import matplotlib as mt
 import csv
 import pickle
-import sys
+
 # import dlib
 import cv2
 import numpy as np
-import os
 
-# Loading csv into etic
+# Loading csv into labs
 
-etic = []
+labs = []
 with open('wiki_imdb_margine_40.csv', newline='') as csvfile:
-    etichetta2 = csv.reader(csvfile, delimiter=',', quotechar='|')
-    for row in etichetta2:
-        etic.append(row)
+    labels2 = csv.reader(csvfile, delimiter=',', quotechar='|')
+    for row in labels2:
+        labs.append(row)
 
 # Using relative path
-# etic[n][2] means taking the 2nd cell of the row or rather the path
+# labs[n][2] means taking the 2nd cell of the row or rather the path
 # some csv (like Chalearn) don't have gender information, so they have 2 cells per line and not 3
 
 filenames = []
-leng = len(etic)
+leng = len(labs)
 for n in range(0, leng):
-    filenames.append(etic[n][2])
+    filenames.append(labs[n][2])
 
 filenames
 
@@ -41,8 +36,8 @@ imgf = []
 imgm = []
 
 # For labels
-etif = np.zeros((5000, 2))
-etim = np.zeros((5000, 2))
+labf = np.zeros((5000, 2))
+labm = np.zeros((5000, 2))
 
 # Indices to help with the procedure
 f014 = 0
@@ -59,80 +54,80 @@ pos = 0
 pos1 = 0
 pos2 = 0
 
-shuffle_index = np.random.permutation(len(etic))
+shuffle_index = np.random.permutation(len(labs))
 
 i = 0
 
-while ((pos1 + pos2) != 10000 and i < len(etic)):
-    if (etic[shuffle_index[i]][0] != 'NaN'):
-        genere = int(etic[shuffle_index[i]][0])
-        eta = int(etic[shuffle_index[i]][1])
-        path = p + etic[shuffle_index[i]][2]
-        if (genere == 0 and eta < 15 and f014 < 1000):
+while (pos1 + pos2) != 10000 and i < len(labs):
+    if labs[shuffle_index[i]][0] != 'NaN':
+        gender = int(labs[shuffle_index[i]][0])
+        age = int(labs[shuffle_index[i]][1])
+        path = p + labs[shuffle_index[i]][2]
+        if gender == 0 and age < 15 and f014 < 1000:
             imgf.append(cv2.imread(path))
-            etif[pos1][0] = genere
-            etif[pos1][1] = eta
+            labf[pos1][0] = gender
+            labf[pos1][1] = age
             f014 = f014 + 1
             pos1 = pos1 + 1
-        elif (genere == 1 and eta < 15 and m014 < 1000):
+        elif gender == 1 and age < 15 and m014 < 1000:
             imgm.append(cv2.imread(path))
-            etim[pos2][0] = genere
-            etim[pos2][1] = eta
+            labm[pos2][0] = gender
+            labm[pos2][1] = age
             m014 = m014 + 1
             pos2 = pos2 + 1
-        elif (genere == 0 and eta > 14 and eta < 26 and f1525 < 1000):
+        elif gender == 0 and 14 < age < 26 and f1525 < 1000:
             imgf.append(cv2.imread(path))
-            etif[pos1][0] = genere
-            etif[pos1][1] = eta
+            labf[pos1][0] = gender
+            labf[pos1][1] = age
             f1525 = f1525 + 1
             pos1 = pos1 + 1
-        elif (genere == 1 and eta > 14 and eta < 26 and m1525 < 1000):
+        elif gender == 1 and 14 < age < 26 and m1525 < 1000:
             imgm.append(cv2.imread(path))
-            etim[pos2][0] = genere
-            etim[pos2][1] = eta
+            labm[pos2][0] = gender
+            labm[pos2][1] = age
             m1525 = m1525 + 1
             pos2 = pos2 + 1
-        elif (genere == 0 and eta > 25 and eta < 40 and f2639 < 1000):
+        elif gender == 0 and 25 < age < 40 and f2639 < 1000:
             imgf.append(cv2.imread(path))
-            etif[pos1][0] = genere
-            etif[pos1][1] = eta
+            labf[pos1][0] = gender
+            labf[pos1][1] = age
             f2639 = f2639 + 1
             pos1 = pos1 + 1
-        elif (genere == 1 and eta > 25 and eta < 40 and m2639 < 1000):
+        elif gender == 1 and 25 < age < 40 and m2639 < 1000:
             imgm.append(cv2.imread(path))
-            etim[pos2][0] = genere
-            etim[pos2][1] = eta
+            labm[pos2][0] = gender
+            labm[pos2][1] = age
             m2639 = m2639 + 1
             pos2 = pos2 + 1
-        elif (genere == 0 and eta > 39 and eta < 56 and f4055 < 1000):
+        elif gender == 0 and 39 < age < 56 and f4055 < 1000:
             imgf.append(cv2.imread(path))
-            etif[pos1][0] = genere
-            etif[pos1][1] = eta
+            labf[pos1][0] = gender
+            labf[pos1][1] = age
             f4055 = f4055 + 1
             pos1 = pos1 + 1
-        elif (genere == 1 and eta > 39 and eta < 56 and m4055 < 1000):
+        elif gender == 1 and 39 < age < 56 and m4055 < 1000:
             imgm.append(cv2.imread(path))
-            etim[pos2][0] = genere
-            etim[pos2][1] = eta
+            labm[pos2][0] = gender
+            labm[pos2][1] = age
             m4055 = m4055 + 1
             pos2 = pos2 + 1
-        elif (genere == 0 and eta > 55 and f56 < 1000):
+        elif gender == 0 and age > 55 and f56 < 1000:
             imgf.append(cv2.imread(path))
-            etif[pos1][0] = genere
-            etif[pos1][1] = eta
+            labf[pos1][0] = gender
+            labf[pos1][1] = age
             f56 = f56 + 1
             pos1 = pos1 + 1
-        elif (genere == 1 and eta > 55 and m56 < 1000):
+        elif gender == 1 and age > 55 and m56 < 1000:
             imgm.append(cv2.imread(path))
-            etim[pos2][0] = genere
-            etim[pos2][1] = eta
+            labm[pos2][0] = gender
+            labm[pos2][1] = age
             m56 = m56 + 1
             pos2 = pos2 + 1
     i = i + 1
 
 print("finish")
 print(m014, m1525, m2639, m4055, m56, f014, f1525, f2639, f4055, f56)
-# Having imgm, imgf, etim, etif.
+# Having imgm, imgf, labm, labf.
 # training, test and validation sequences
 
 
@@ -143,12 +138,12 @@ y = np.zeros((10000, 2))
 X = imgm + imgf
 
 for i in range(0, 5000):
-    y[i][0] = etim[i][0]
-    y[i][1] = etim[i][1]
+    y[i][0] = labm[i][0]
+    y[i][1] = labm[i][1]
 k = 0
 for i in range(5000, 10000):
-    y[i][0] = etif[k][0]
-    y[i][1] = etif[k][1]
+    y[i][0] = labf[k][0]
+    y[i][1] = labf[k][1]
     k = k + 1
 
 X
@@ -182,33 +177,22 @@ for images in X:
 
 # saving weight
 
-with open("nomehog.pkl", "wb") as output:
+with open("namehog.pkl", "wb") as output:
     pickle.dump(X_hog, output)
 
-with open("nomeetichetta.pkl", "wb") as output:
+with open("namelabel.pkl", "wb") as output:
     pickle.dump(y, output)
 
 # EXAMPLE WITH WIKI IMDB
 
 
-import random
-import deap
-from sklearn.model_selection import StratifiedKFold
-from sklearn.model_selection import RandomizedSearchCV
 # from sklearn_deap_master.evolutionary_search import EvolutionaryAlgorithmSearchCV
-from sklearn.model_selection import cross_validate
-from sklearn.model_selection import cross_val_predict
 from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import cross_val_score
 from sklearn import svm
-from sklearn.metrics import classification_report
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import GridSearchCV
 
-with open("nomehog.pkl", "rb") as data:
+with open("namehog.pkl", "rb") as data:
     Hog = pickle.load(data)
-with open("nomeetichetta.pkl", "rb") as data:
+with open("namelabel.pkl", "rb") as data:
     y = pickle.load(data)
 
 Hog = X_hog
@@ -222,21 +206,21 @@ Y = y
 
 # Entries work randomly
 # To divide into males and females I use 2 other vectors. Remember that the first 5000 of the Hog are male, the others female.
-X_maschio = []
-X_femmina = []
+X_man = []
+X_woman = []
 
 for i in range(0, 5000):
     Y[i] = y[i]
-    X_maschio.append(Hog[i])
+    X_man.append(Hog[i])
 
 for i in range(5000, 10000):
     Y[i] = y[i]
-    X_femmina.append(Hog[i])
+    X_woman.append(Hog[i])
 
 # Balancing gender
-X_train_hog = X_maschio[:3500] + X_femmina[:3500]
-X_test_hog = X_maschio[3500:4250] + X_femmina[3500:4250]
-X_vali_hog = X_maschio[4250:] + X_femmina[4250:]
+X_train_hog = X_man[:3500] + X_woman[:3500]
+X_test_hog = X_man[3500:4250] + X_woman[3500:4250]
+X_vali_hog = X_man[4250:] + X_woman[4250:]
 
 # Here I deal with labels in the same way. 1 stands for gender label (I create gender vectors only).
 
@@ -292,9 +276,9 @@ m = 0
 fem = 0
 truth = np.append(y_train_1, y_vali_1)
 for i in range(0, len(test)):
-    if (truth[i] == 0 and truth[i] == test[i]):
+    if truth[i] == 0 and truth[i] == test[i]:
         fem = fem + 1
-    if (truth[i] == 1 and truth[i] == test[i]):
+    if truth[i] == 1 and truth[i] == test[i]:
         m = m + 1
 print(fem / 4250, m / 4250)
 
@@ -305,4 +289,4 @@ print(c_m)
 
 from sklearn.externals import joblib
 
-joblib.dump(svc, 'nomesvc.pkl')
+joblib.dump(svc, 'namesvc.pkl')
