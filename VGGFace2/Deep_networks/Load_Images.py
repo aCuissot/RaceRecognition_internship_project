@@ -73,10 +73,9 @@ def preprocessing(model, img_name, img_path):
     targetSize = (224, 224)  # size for mobilenet, resnet and vgg16
     if model == 'nasnet':
         targetSize = (331, 331)
-    print(img_path)
     img = cv.imread(img_path)
-
-    img = cropFace(img, img_name)
+    img_id = img_path.split("\\")[-2] + "/" + img_name
+    img = cropFace(img, img_id)
     img = cv.resize(img, targetSize)
     x = image.img_to_array(img)
     x = np.expand_dims(x, axis=0)
@@ -112,7 +111,9 @@ def loadImages(model, trainBool=True):
             X_train.append(newImage)  # bad idea => generator
 
 
-class DataGeneratorMobileNetResNetVGG(keras.utils.Sequence):
+# don't forgot changing dim when using NASNet
+
+class DataGenerator(keras.utils.Sequence):
     """Generates data for Keras"""
 
     def __init__(self, list_IDs, labels, model, batch_size=5, dim=(224, 224, 3), n_channels=1,
@@ -155,6 +156,7 @@ class DataGeneratorMobileNetResNetVGG(keras.utils.Sequence):
         """Generates data containing batch_size samples"""
         # X : (n_samples, *dim, n_channels)
         # Initialization
+        # np.empty create an array of the dimensions given, but data is not initialize (unlike np.zeros) => faster
         X = np.empty((self.batch_size, *self.dim, self.n_channels))
         y = np.empty((self.batch_size), dtype=int)
 
@@ -166,7 +168,7 @@ class DataGeneratorMobileNetResNetVGG(keras.utils.Sequence):
             for img in images:
                 sameIdentityImgVector.append(preprocessing(self.model, img.split(".")[0], folderPath + "\\" + img))
             # Store sample
-            X[i,] = sameIdentityImgVector
+            X[i, ] = sameIdentityImgVector
 
             # Store class
             y[i] = self.labels[ID]
@@ -215,8 +217,8 @@ def main():
               'n_channels': 1,
               'shuffle': True}
 
-    training_generator = DataGeneratorMobileNetResNetVGG(partition['train'], labels, **params)
-    validation_generator = DataGeneratorMobileNetResNetVGG(partition['validation'], labels, **params)
+    training_generator = DataGenerator(partition['train'], labels, **params)
+    validation_generator = DataGenerator(partition['validation'], labels, **params)
 
     from keras.applications.resnet50 import ResNet50
 
@@ -225,13 +227,13 @@ def main():
     model.fit_generator(generator=training_generator,
                         validation_data=validation_generator,
                         use_multiprocessing=True,
-                        workers=6)
+                        workers=1)
     # model.summary()
     img = image.load_img("../Data/test.jpg", target_size=(224, 224))
     x = image.img_to_array(img)
     x = np.expand_dims(x, axis=0)
     x = preprocess_input(x)
-    model.predict(x)
+    print(model.predict(x))
 
 
 if __name__ == '__main__':
