@@ -1,4 +1,5 @@
 import os
+from multiprocessing import freeze_support
 
 import cv2 as cv
 import keras
@@ -7,6 +8,7 @@ import pandas as pd
 from keras import Sequential
 from keras.preprocessing import image
 from keras.utils import Sequence
+from keras_applications.resnet50 import preprocess_input
 from skimage.io import imread
 from skimage.transform import resize
 
@@ -30,7 +32,6 @@ idTrainList = getFileElementsList('../Data/labels/homogeneousTrainSetIds.txt', '
 idTestList = getFileElementsList('../Data/labels/homogeneousTestSetIds.txt', 'test\\')
 labelTrainList = getFileElementsList('../Data/labels/homogeneousTrainLabels.txt', "")
 labelTestList = getFileElementsList('../Data/labels/homogeneousTestLabels.txt', "")
-print(idTrainList)
 partition = {'train': idTrainList,
              'validation': idTestList
              }
@@ -39,7 +40,6 @@ for i in range(len(idTrainList)):
     labels[idTrainList[i]] = labelTrainList[i]
 for i in range(len(idTestList)):
     labels[idTestList[i]] = labelTestList[i]
-print(labels)
 
 
 def getPrimarySquareSize(shape, bb):
@@ -73,7 +73,9 @@ def preprocessing(model, img_name, img_path):
     targetSize = (224, 224)  # size for mobilenet, resnet and vgg16
     if model == 'nasnet':
         targetSize = (331, 331)
+    print(img_path)
     img = cv.imread(img_path)
+
     img = cropFace(img, img_name)
     img = cv.resize(img, targetSize)
     x = image.img_to_array(img)
@@ -101,17 +103,13 @@ def loadImages(model, trainBool=True):
     X_train = []
     folders = os.listdir(path)
     folders = folders[:200]
-    index = 0
     for f in folders:
         folderPath = path + "\\" + f
         images = os.listdir(folderPath)
-        index += 1
-        if index % 10 == 0:
-            print(index / 2)
         for imageName in images:
             image_path = folderPath + "\\" + imageName
             newImage = preprocessing(model, f + "/" + imageName.split(".")[0], image_path)
-            X_train.append(newImage)  # bad idea
+            X_train.append(newImage)  # bad idea => generator
 
 
 class DataGeneratorMobileNetResNetVGG(keras.utils.Sequence):
@@ -154,7 +152,8 @@ class DataGeneratorMobileNetResNetVGG(keras.utils.Sequence):
             np.random.shuffle(self.indexes)
 
     def __data_generation(self, list_IDs_temp):
-        """Generates data containing batch_size samples"""  # X : (n_samples, *dim, n_channels)
+        """Generates data containing batch_size samples"""
+        # X : (n_samples, *dim, n_channels)
         # Initialization
         X = np.empty((self.batch_size, *self.dim, self.n_channels))
         y = np.empty((self.batch_size), dtype=int)
@@ -165,20 +164,20 @@ class DataGeneratorMobileNetResNetVGG(keras.utils.Sequence):
             folderPath = Path + ID
             images = os.listdir(folderPath)
             for img in images:
-                sameIdentityImgVector.append(preprocessing(model, img.split(".")[0], Path + img))
+                sameIdentityImgVector.append(preprocessing(self.model, img.split(".")[0], folderPath + "\\" + img))
             # Store sample
             X[i,] = sameIdentityImgVector
 
             # Store class
             y[i] = self.labels[ID]
-
+        print("DataGeneration")
         return X, keras.utils.to_categorical(y, num_classes=self.n_classes)
 
 
-batch_size = 64
-num_epochs = 20
-num_training_samples = 1868
-num_validation_samples = 76
+# batch_size = 64
+# num_epochs = 20
+# num_training_samples = 1868
+# num_validation_samples = 76
 
 # def getIDsFromFile(file, FullPath):
 #     idsList = []
@@ -207,21 +206,34 @@ num_validation_samples = 76
 # GT_training = getEthListFromFile(trainLabels)
 # GT_validation = getEthListFromFile(testLabels)
 
-params = {'dim': (32, 32, 32),
-          'model': 'resnet',
-          'batch_size': 64,
-          'n_classes': 6,
-          'n_channels': 1,
-          'shuffle': True}
 
-training_generator = DataGeneratorMobileNetResNetVGG(partition['train'], labels, **params)
-validation_generator = DataGeneratorMobileNetResNetVGG(partition['validation'], labels, **params)
+def main():
+    params = {'dim': (224, 224, 3),
+              'model': 'resnet',
+              'batch_size': 5,
+              'n_classes': 6,
+              'n_channels': 1,
+              'shuffle': True}
 
-model = Sequential()
+    training_generator = DataGeneratorMobileNetResNetVGG(partition['train'], labels, **params)
+    validation_generator = DataGeneratorMobileNetResNetVGG(partition['validation'], labels, **params)
 
-model.fit_generator(generator=training_generator,
-                    validation_data=validation_generator,
-                    use_multiprocessing=True,
-                    workers=6)
+    from keras.applications.resnet50 import ResNet50
+
+    model = ResNet50(weights=None, include_top=False, input_shape=(224, 224, 3))
+    model.compile(loss='mean_squared_error', optimizer='sgd')
+    model.fit_generator(generator=training_generator,
+                        validation_data=validation_generator,
+                        use_multiprocessing=True,
+                        workers=6)
+    # model.summary()
+    img = image.load_img("../Data/test.jpg", target_size=(224, 224))
+    x = image.img_to_array(img)
+    x = np.expand_dims(x, axis=0)
+    x = preprocess_input(x)
+    model.predict(x)
 
 
+if __name__ == '__main__':
+    freeze_support()
+    main()
