@@ -13,8 +13,7 @@ def aaaaaaaaa(fileName, fileDestName):
         images = os.listdir(path + "\\" + i)
         for j in images:
             outTxt += i + "\\" + j + "\n"
-        fileDst.write(outTxt)
-        outTxt = ""
+    fileDst.write(outTxt)
 
     fileDst.close()
     file.close()

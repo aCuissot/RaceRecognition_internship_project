@@ -28,18 +28,37 @@ def getFileElementsList(file, prefix):
     return list
 
 
-idTrainList = getFileElementsList('../Data/labels/homogeneousTrainSetIds.txt', 'train\\')
-idTestList = getFileElementsList('../Data/labels/homogeneousTestSetIds.txt', 'test\\')
+# idTrainList = getFileElementsList('../Data/labels/homogeneousTrainSetIds.txt', 'train\\')
+# idTestList = getFileElementsList('../Data/labels/homogeneousTestSetIds.txt', 'test\\')
+idTrainList = getFileElementsList('../Data/labels/homogeneousTrainImgs.txt', 'train\\')
+idTestList = getFileElementsList('../Data/labels/homogeneousTestImgs.txt', 'test\\')
 labelTrainList = getFileElementsList('../Data/labels/homogeneousTrainLabels.txt', "")
 labelTestList = getFileElementsList('../Data/labels/homogeneousTestLabels.txt', "")
 partition = {'train': idTrainList,
              'validation': idTestList
              }
 labels = {}
-for i in range(len(idTrainList)):
-    labels[idTrainList[i]] = labelTrainList[i]
-for i in range(len(idTestList)):
-    labels[idTestList[i]] = labelTestList[i]
+
+id = ""
+index = -1
+for i in idTrainList:
+    if id != i.split("\\")[1][-4:]:
+        index += 1
+        id = i.split("\\")[1][-4:]
+        print(id)
+    labels[i] = labelTrainList[index]
+
+index = -1
+for i in idTestList:
+    if id != i.split("\\")[1]:
+        index += 1
+        id = i.split("\\")[1]
+    labels[i] = labelTestList[index]
+
+aaaaaa = open("tmp.txt", "w")
+for i in labels:
+    aaaaaa.write(str(i) + "\n")
+aaaaaa.close()
 
 
 def getPrimarySquareSize(shape, bb):
@@ -168,7 +187,7 @@ class DataGenerator(keras.utils.Sequence):
             for img in images:
                 sameIdentityImgVector.append(preprocessing(self.model, img.split(".")[0], folderPath + "\\" + img))
             # Store sample
-            X[i, ] = sameIdentityImgVector
+            X[i,] = sameIdentityImgVector
 
             # Store class
             y[i] = self.labels[ID]
