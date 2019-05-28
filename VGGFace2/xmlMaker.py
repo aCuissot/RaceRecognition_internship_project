@@ -26,6 +26,22 @@ def writeCategoryInXML(file, name, cat):
     file.write("</subject>\n")
 
 
+def getMaxNumberPictureForSameId():
+    folders = os.listdir(path)
+    maxi = 0
+    i = 0
+    for f in folders:
+        folderPath = path + "\\" + f
+        images = os.listdir(folderPath)
+        maxi = max(maxi, len(images))
+        i += 1
+        if i % 100 == 0:
+            print(i)
+    return maxi
+
+
+# print(getMaxNumberPictureForSameId())  # 843 for training set, 761 for test => 843
+# and min = 87 for training set and 98 for test => 87
 folders = os.listdir(path)
 XML = open("Data/labels/trainLabels1.xml", "w+")
 XML.write("<xml>\n")
