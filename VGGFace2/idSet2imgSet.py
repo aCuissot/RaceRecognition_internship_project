@@ -19,4 +19,30 @@ def aaaaaaaaa(fileName, fileDestName):
     file.close()
 
 
-aaaaaaaaa("Data/labels/homogeneousTrainSetIds.txt", "Data/labels/homogeneousTrainImgs.txt")
+def getFileElementsList(file):
+    filecontent = open(file, "r")
+    contentStr = filecontent.read()
+    filecontent.close()
+    list = contentStr.split('\n')
+    return list
+
+
+def checker():
+    idTrainList = getFileElementsList('Data/labels/homogeneousTrainSetIds.txt')
+    id2check = getFileElementsList('Data/labels/homogeneousTrainImgs.txt')
+    n = len(id2check)
+    id = ""
+    List = []
+    for i in id2check:
+        if i.split("\\")[0] != id:
+            id = i.split("\\")[0]
+            List.append(id)
+    print(len(List))
+    print(len(idTrainList))
+    for i in range(len(List)):
+        if List[i] != idTrainList[i]:
+            print(List[i] + " " + idTrainList[i])
+
+
+# aaaaaaaaa("Data/labels/homogeneousTrainSetIds.txt", "Data/labels/homogeneousTrainImgs.txt")
+checker()

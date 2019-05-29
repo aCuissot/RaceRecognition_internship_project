@@ -22,9 +22,9 @@ def getFileElementsList(file, prefix):
     contentStr = filecontent.read()
     filecontent.close()
     list = contentStr.split('\n')
-    if prefix != "":
-        for i in range(len(list)):
-            list[i] = prefix + list[i]
+
+    for i_loc in range(len(list)):
+        list[i_loc] = prefix + list[i_loc]
     return list
 
 
@@ -47,7 +47,7 @@ for i in idTrainList:
         id = i.split("\\")[1][-4:]
         print(id)
     labels[i] = labelTrainList[index]
-
+print(index)
 index = -1
 for i in idTestList:
     if id != i.split("\\")[1]:
@@ -56,9 +56,12 @@ for i in idTestList:
     labels[i] = labelTestList[index]
 
 aaaaaa = open("tmp.txt", "w")
-for i in labels:
-    aaaaaa.write(str(i) + "\n")
+aaaaaa.write(str(labels))
 aaaaaa.close()
+bbbbbb = open("tmp2.txt", "w")
+for i in labels:
+    bbbbbb.write(i + "\n")
+bbbbbb.close()
 
 
 def getPrimarySquareSize(shape, bb):
