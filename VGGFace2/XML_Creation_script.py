@@ -12,7 +12,7 @@ def getId(id):
 XML = "<base>\n"
 for i in range(1, 9280):
     XML += "<subject>\n"
-    XML += "<id>" + getId(i) + "</id>\n"
+    XML += "<curr_id>" + getId(i) + "</curr_id>\n"
     XML += "<ethnicity></ethnicity>\n"
     XML += "</subject>\n"
 XML += "</base>\n"

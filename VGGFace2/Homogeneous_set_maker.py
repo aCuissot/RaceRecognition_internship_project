@@ -29,9 +29,9 @@ def parseXML(xmlStr):
     xmlStr = xmlStr.replace("<subject>\n", "")
     xmlStr = xmlStr.replace("</subject>\n", "")
 
-    xmlStr = xmlStr.replace("<id>", "")
+    xmlStr = xmlStr.replace("<curr_id>", "")
     xmlStr = xmlStr.replace("<ethnicity>", "")
-    xmlStr = xmlStr.replace("</id>", "")
+    xmlStr = xmlStr.replace("</curr_id>", "")
     xmlStr = xmlStr.replace("</ethnicity>", "")
 
     list = xmlStr.split("\n")

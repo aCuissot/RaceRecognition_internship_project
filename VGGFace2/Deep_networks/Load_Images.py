@@ -39,22 +39,22 @@ partition = {'train': idTrainList,
              }
 labels = {}
 
-id = ""
+curr_id = ""
 index = -1
 for i in idTrainList:
-    if id != i.split("\\")[1][-4:]:
+    if curr_id != i.split("\\")[1][-4:]:
         index += 1
-        id = i.split("\\")[1][-4:]
-        print(id)
+        curr_id = i.split("\\")[1][-4:]
+
     labels[i] = labelTrainList[index]
-print(index)
 index = -1
 for i in idTestList:
-    if id != i.split("\\")[1]:
+    if curr_id != i.split("\\")[1]:
         index += 1
-        id = i.split("\\")[1]
+        curr_id = i.split("\\")[1]
     labels[i] = labelTestList[index]
 
+# Only for debugging
 aaaaaa = open("tmp.txt", "w")
 aaaaaa.write(str(labels))
 aaaaaa.close()
@@ -62,6 +62,9 @@ bbbbbb = open("tmp2.txt", "w")
 for i in labels:
     bbbbbb.write(i + "\n")
 bbbbbb.close()
+
+
+# end of debug session
 
 
 def getPrimarySquareSize(shape, bb):
@@ -96,7 +99,7 @@ def preprocessing(model, img_name, img_path):
     if model == 'nasnet':
         targetSize = (331, 331)
     img = cv.imread(img_path)
-    img_id = img_path.split("\\")[-2] + "/" + img_name
+    img_id = img_path.split("\\")[-2] + "/" + img_name.split("\\")[-1]
     img = cropFace(img, img_id)
     img = cv.resize(img, targetSize)
     x = image.img_to_array(img)
@@ -116,6 +119,7 @@ def preprocessing(model, img_name, img_path):
     return x
 
 
+"""
 def loadImages(model, trainBool=True):
     path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train"
     if not trainBool:
@@ -131,9 +135,11 @@ def loadImages(model, trainBool=True):
             image_path = folderPath + "\\" + imageName
             newImage = preprocessing(model, f + "/" + imageName.split(".")[0], image_path)
             X_train.append(newImage)  # bad idea => generator
+"""
 
 
 # don't forgot changing dim when using NASNet
+
 
 class DataGenerator(keras.utils.Sequence):
     """Generates data for Keras"""
@@ -184,13 +190,14 @@ class DataGenerator(keras.utils.Sequence):
 
         # Generate data
         for i, ID in enumerate(list_IDs_temp):
-            sameIdentityImgVector = []
-            folderPath = Path + ID
-            images = os.listdir(folderPath)
-            for img in images:
-                sameIdentityImgVector.append(preprocessing(self.model, img.split(".")[0], folderPath + "\\" + img))
+            imgVector = []
+            imgPath = Path + ID
+            # folderPath = Path + ID
+            # images = os.listdir(folderPath)
+            # for img in images:
+            imgVector.append(preprocessing(self.model, imgPath.split(".")[0], imgPath))
             # Store sample
-            X[i,] = sameIdentityImgVector
+            X[i,] = imgVector
 
             # Store class
             y[i] = self.labels[ID]
@@ -198,44 +205,11 @@ class DataGenerator(keras.utils.Sequence):
         return X, keras.utils.to_categorical(y, num_classes=self.n_classes)
 
 
-# batch_size = 64
-# num_epochs = 20
-# num_training_samples = 1868
-# num_validation_samples = 76
-
-# def getIDsFromFile(file, FullPath):
-#     idsList = []
-#     for line in file:
-#         idsList.append(FullPath + "\\" + line)
-#     return idsList
-#
-#
-# trainSetIds = open('../Data/labels/homogeneousTrainSetIds.txt', "r")
-# testSetIds = open('../Data/labels/homogeneousTestSetIds.txt', "r")
-# training_filenames = getIDsFromFile(trainSetIds, "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train")
-#
-# validation_filenames = getIDsFromFile(testSetIds, "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train")
-#
-#
-# def getEthListFromFile(file):
-#     ethList = []
-#     for line in file:
-#         ethList.append(line)
-#     return ethList
-#
-#
-# trainLabels = open('../Data/labels/homogeneousTrainLabels.txt', "r")
-# testLabels = open('../Data/labels/homogeneousTestLabels.txt', "r")
-#
-# GT_training = getEthListFromFile(trainLabels)
-# GT_validation = getEthListFromFile(testLabels)
-
-
 def main():
     params = {'dim': (224, 224, 3),
               'model': 'resnet',
-              'batch_size': 5,
-              'n_classes': 6,
+              'batch_size': 10000,
+              'n_classes': 4,
               'n_channels': 1,
               'shuffle': True}
 

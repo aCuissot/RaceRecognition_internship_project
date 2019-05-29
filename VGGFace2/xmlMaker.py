@@ -15,9 +15,9 @@ def getImage(index, imgs, f):
 def writeCategoryInXML(file, name, cat):
     file.write("<subject>\n")
 
-    file.write("<id>")
+    file.write("<curr_id>")
     file.write(str(name))
-    file.write("</id>\n")
+    file.write("</curr_id>\n")
 
     file.write("<ethnicity>")
     file.write(str(cat))
