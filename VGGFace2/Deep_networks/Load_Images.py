@@ -49,20 +49,20 @@ for i in idTrainList:
     labels[i] = labelTrainList[index]
 index = -1
 for i in idTestList:
-    if curr_id != i.split("\\")[1]:
+    if curr_id != i.split("\\")[1][-4:]:
         index += 1
-        curr_id = i.split("\\")[1]
+        curr_id = i.split("\\")[1][-4:]
     labels[i] = labelTestList[index]
 
 # Only for debugging
-aaaaaa = open("tmp.txt", "w")
-aaaaaa.write(str(labels))
-aaaaaa.close()
-bbbbbb = open("tmp2.txt", "w")
-for i in labels:
-    bbbbbb.write(i + "\n")
-bbbbbb.close()
 
+# aaaaaa = open("tmp.txt", "w")
+# aaaaaa.write(str(labels))
+# aaaaaa.close()
+# bbbbbb = open("tmp2.txt", "w")
+# for i in labels:
+#     bbbbbb.write(i + "\n")
+# bbbbbb.close()
 
 # end of debug session
 
@@ -117,6 +117,7 @@ def preprocessing(model, img_name, img_path):
             'model parameter have to be \'mobilenet\', \'resnet\', \'vgg16\' or \'nasnet\', here it is : {}'.format(
                 model))
     return x
+    # x shape = (1, 224, 224, 3)....
 
 
 """
@@ -144,7 +145,7 @@ def loadImages(model, trainBool=True):
 class DataGenerator(keras.utils.Sequence):
     """Generates data for Keras"""
 
-    def __init__(self, list_IDs, labels, model, batch_size=5, dim=(224, 224, 3), n_channels=1,
+    def __init__(self, list_IDs, labels, model, batch_size=5, dim=(224, 224), n_channels=3,
                  n_classes=10, shuffle=True):
         """Initialization"""
         self.dim = dim
@@ -187,18 +188,17 @@ class DataGenerator(keras.utils.Sequence):
         # np.empty create an array of the dimensions given, but data is not initialize (unlike np.zeros) => faster
         X = np.empty((self.batch_size, *self.dim, self.n_channels))
         y = np.empty((self.batch_size), dtype=int)
-
+        advencement = 0
         # Generate data
         for i, ID in enumerate(list_IDs_temp):
-            imgVector = []
-            imgPath = Path + ID
-            # folderPath = Path + ID
-            # images = os.listdir(folderPath)
-            # for img in images:
-            imgVector.append(preprocessing(self.model, imgPath.split(".")[0], imgPath))
-            # Store sample
-            X[i,] = imgVector
 
+            imgPath = Path + ID
+
+            # Store sample
+            X[i,] = preprocessing(self.model, imgPath.split(".")[0], imgPath)
+            advencement += 1
+            if advencement % 100 == 0:
+                print(str(advencement / 10) + "%")
             # Store class
             y[i] = self.labels[ID]
         print("DataGeneration")
@@ -206,11 +206,12 @@ class DataGenerator(keras.utils.Sequence):
 
 
 def main():
-    params = {'dim': (224, 224, 3),
+    # training resnet and testing it
+    params = {'dim': (1, 224, 224),
               'model': 'resnet',
-              'batch_size': 10000,
+              'batch_size': 1000,
               'n_classes': 4,
-              'n_channels': 1,
+              'n_channels': 3,
               'shuffle': True}
 
     training_generator = DataGenerator(partition['train'], labels, **params)
@@ -222,13 +223,17 @@ def main():
     model.compile(loss='mean_squared_error', optimizer='sgd')
     model.fit_generator(generator=training_generator,
                         validation_data=validation_generator,
-                        use_multiprocessing=True,
+                        use_multiprocessing=False,
                         workers=1)
+    # workers allow us to create different threads to treat batches in parallel
     # model.summary()
+
+    # preparing an image for testing model
     img = image.load_img("../Data/test.jpg", target_size=(224, 224))
     x = image.img_to_array(img)
     x = np.expand_dims(x, axis=0)
     x = preprocess_input(x)
+
     print(model.predict(x))
 
 
