@@ -182,12 +182,13 @@ class DataGenerator(keras.utils.Sequence):
             np.random.shuffle(self.indexes)
 
     def __data_generation(self, list_IDs_temp):
+        print("aaaa")
         """Generates data containing batch_size samples"""
         # X : (n_samples, *dim, n_channels)
         # Initialization
         # np.empty create an array of the dimensions given, but data is not initialize (unlike np.zeros) => faster
         X = np.empty((self.batch_size, *self.dim, self.n_channels))
-        y = np.empty((self.batch_size), dtype=int)
+        y = np.empty(self.batch_size, dtype=int)
         advencement = 0
         # Generate data
         for i, ID in enumerate(list_IDs_temp):
