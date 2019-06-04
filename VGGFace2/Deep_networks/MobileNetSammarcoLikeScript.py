@@ -8,8 +8,11 @@ import tensorflow
 # from sklearn.utils import shuffle
 import numpy as np
 import csv
+import pandas as pd
 
 import keras
+from keras.preprocessing import image
+
 
 print(keras.__version__)
 
@@ -74,6 +77,51 @@ weight_decay = 5e-5
 
 print("CONFIGURATION OK")
 
+csvBBGroundTruthTrainIds = pd.read_csv("../Data/bb_landmark/loose_bb_train.csv").loc[:, "NAME_ID"]
+csvBBGroundTruthTrain = pd.read_csv("../Data/bb_landmark/loose_bb_train.csv").set_index("NAME_ID")
+Path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\"
+
+def getPrimarySquareSize(shape, bb):
+    maxBB = max(bb[2], bb[3])
+    if maxBB > shape[0] or maxBB > shape[1]:
+        return min(shape[0], shape[1])
+    else:
+        return maxBB
+
+
+# Here we crop the face in a square image with a padding of 20% if it's possible
+
+def cropFace(img, imgId):
+    shape = img.shape
+    bb = csvBBGroundTruthTrain.loc[imgId, :]
+    primarySquareSize = getPrimarySquareSize(shape, bb)
+    topleft = [int(bb[0] - ((primarySquareSize - bb[2]) / 2) - (0.2 * primarySquareSize)),
+               int(bb[1] - ((primarySquareSize - bb[3]) / 2) - (0.2 * primarySquareSize))]
+    botright = [int(bb[0] + primarySquareSize - ((primarySquareSize - bb[2]) / 2) + (0.2 * primarySquareSize)),
+                int(bb[1] + primarySquareSize - ((primarySquareSize - bb[3]) / 2) + (0.2 * primarySquareSize))]
+
+    topleft[0] = max(topleft[0], 0)
+    topleft[1] = max(topleft[1], 0)
+    botright[0] = min(botright[0], shape[0])
+    botright[1] = min(botright[1], shape[1])
+
+    return img[topleft[1]:botright[1], topleft[0]:botright[0]]
+
+
+def preprocessing(img_name, img_path):
+    targetSize = (224, 224)  # size for mobilenet
+    img = cv2.imread(img_path)
+    img_id = img_path.split("\\")[-2] + "/" + img_name.split("\\")[-1]
+    img = cropFace(img, img_id)
+    img = cv2.resize(img, targetSize)
+    x = image.img_to_array(img)
+    x = np.expand_dims(x, axis=0)
+
+    x = keras.applications.mobilenet.preprocess_input(x)
+
+    return x
+    # x shape = (1, 224, 224, 3)....
+
 
 def data_generator(csvpath):
     labs = []
@@ -106,12 +154,12 @@ def data_generator_prepr(csvpath, size):
 
             img = img[ny:ny + nr, nx:nx + nr]
 
-            image = cv2.resize(img, IMAGE_SIZE, 0, 0, cv2.INTER_LINEAR)
+            picture = cv2.resize(img, IMAGE_SIZE, 0, 0, cv2.INTER_LINEAR)
 
-            image = image.astype(np.float32)
+            picture = picture.astype(np.float32)
             # image /= 255
             # do stuff for preprocessing img
-            img_list.append(image)
+            img_list.append(picture)
             ethnicity_list.append(i[1])
 
             if len(img_list) == size:
