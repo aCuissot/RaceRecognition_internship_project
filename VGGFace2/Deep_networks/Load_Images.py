@@ -95,6 +95,10 @@ def cropFace(img, imgId):
 
 
 def preprocessing(model, img_name, img_path):
+    print("Preprocessing")
+    print(img_name)
+    print(img_path)
+
     targetSize = (224, 224)  # size for mobilenet, resnet and vgg16
     if model == 'nasnet':
         targetSize = (331, 331)

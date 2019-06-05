@@ -4,6 +4,7 @@ import cv2
 import os
 import glob
 import tensorflow
+from multiprocessing import freeze_support
 
 # from sklearn.utils import shuffle
 import numpy as np
@@ -12,7 +13,6 @@ import pandas as pd
 
 import keras
 from keras.preprocessing import image
-
 
 print(keras.__version__)
 
@@ -62,7 +62,7 @@ IMAGE_SIZE = (img_size_row, img_size_column)
 # choose the batch size
 batch_size = 64
 steps_per_epoch = train_size / batch_size
-validation_steps = val_size / batch_size
+# validation_steps = val_size / batch_size
 
 # choose the epochs
 epochs = 100
@@ -80,6 +80,7 @@ print("CONFIGURATION OK")
 csvBBGroundTruthTrainIds = pd.read_csv("../Data/bb_landmark/loose_bb_train.csv").loc[:, "NAME_ID"]
 csvBBGroundTruthTrain = pd.read_csv("../Data/bb_landmark/loose_bb_train.csv").set_index("NAME_ID")
 Path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\"
+
 
 def getPrimarySquareSize(shape, bb):
     maxBB = max(bb[2], bb[3])
@@ -123,7 +124,8 @@ def preprocessing(img_name, img_path):
     # x shape = (1, 224, 224, 3)....
 
 
-def data_generator(csvpath):
+def data_generator(csvpath, train):
+
     labs = []
     with open(csvpath, newline='') as csvfile:
         labels = csv.reader(csvfile, delimiter=',', quotechar='|')
@@ -135,15 +137,18 @@ def data_generator(csvpath):
 
     for row in p:
         path = row[0]
-        image = cv2.imread(path)
 
-        im = np.array(image)
         ethnicity = np.array(int(row[1]))
 
-        yield (im, ethnicity)
+        yield (path, ethnicity)
 
 
-def data_generator_prepr(csvpath, size):
+def data_generator_prepr(csvpath, size, train):
+    subpath = ""
+    if train:
+        subpath = "train"
+    else:
+        subpath = "test"
     while 1:
         data = data_generator(csvpath)
         img_list = []
@@ -154,7 +159,8 @@ def data_generator_prepr(csvpath, size):
 
             img = img[ny:ny + nr, nx:nx + nr]
 
-            picture = cv2.resize(img, IMAGE_SIZE, 0, 0, cv2.INTER_LINEAR)
+            pic_path = Path + subpath + "\\" + i[0]
+            picture = preprocessing(pic_path.split(".")[0], pic_path)
 
             picture = picture.astype(np.float32)
             # image /= 255
@@ -171,9 +177,9 @@ def data_generator_prepr(csvpath, size):
                 yield (im_p, gender)
 
 
-train_generator = data_generator_prepr('../Data/labels/homogeneousCsvTrain.csv', batch_size)
-val_generator = data_generator_prepr('../Data/labels/homogeneousCsvTest.csv', batch_size)
-test_generator = data_generator_prepr('../csvVggDataset2/testCompleto.csv', 1)  # to delete?
+train_generator = data_generator_prepr('../Data/labels/homogeneousCsvTrain.csv', batch_size, True)
+test_generator = data_generator_prepr('../Data/labels/homogeneousCsvTest.csv', batch_size, False)
+# val_generator = data_generator_prepr('../csvVggDataset2/valCompleto.csv', 1)  # to delete?
 
 model = keras.applications.mobilenet.MobileNet(input_shape=(224, 224, 3))
 # model.summary()
@@ -336,31 +342,37 @@ def step_decay_schedule(initial_lr=learning_rate_di_base, decay_factor=learning_
 
     return LearningRateScheduler(schedule, verbose=1)
 
+def main():
 
-adam_with_lr_multipliers = Adam_lr_mult(multipliers=learning_rate_multipliers)
+    adam_with_lr_multipliers = Adam_lr_mult(multipliers=learning_rate_multipliers)
 
-mobile_model.compile(adam_with_lr_multipliers,
-                     loss='categorical_crossentropy', metrics=['accuracy'])
+    mobile_model.compile(adam_with_lr_multipliers,
+                         loss='categorical_crossentropy', metrics=['accuracy'])
 
-# TRAIN
+    # TRAIN
 
 
-# callbacks
-filepath = "mobile5.best.hdf5"
-lr_sched = step_decay_schedule()
-checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
-callbacks_list = [EarlyStopping(monitor='val_acc',
-                                patience=7,
-                                verbose=1,
-                                min_delta=1e-4,
-                                mode='max'),
-                  lr_sched,
-                  checkpoint]
+    # callbacks
+    filepath = "mobile5.best.hdf5"
+    lr_sched = step_decay_schedule()
+    checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+    callbacks_list = [EarlyStopping(monitor='val_acc',
+                                    patience=7,
+                                    verbose=1,
+                                    min_delta=1e-4,
+                                    mode='max'),
+                      lr_sched,
+                      checkpoint]
 
-mobile_model.fit_generator(train_generator, steps_per_epoch=steps_per_epoch, epochs=epochs, verbose=1,
-                           callbacks=callbacks_list,
-                           validation_data=val_generator, validation_steps=validation_steps, use_multiprocessing=True)
+    mobile_model.fit_generator(train_generator, steps_per_epoch=steps_per_epoch, epochs=epochs, verbose=1,
+                               callbacks=callbacks_list,
+                               use_multiprocessing=True)
 
-scores = mobile_model.evaluate_generator(test_generator, steps=test_size, use_multiprocessing=True, verbose=1)
+    scores = mobile_model.evaluate_generator(test_generator, steps=test_size, use_multiprocessing=True, verbose=1)
 
-print("%s: %.2f%%" % (mobile_model.metrics_names[1], scores[1] * 100))
+    print("%s: %.2f%%" % (mobile_model.metrics_names[1], scores[1] * 100))
+
+
+if __name__ == '__main__':
+    freeze_support()
+    main()
