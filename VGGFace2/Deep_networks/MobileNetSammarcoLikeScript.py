@@ -32,9 +32,10 @@ print("IMPORT OK")
 
 # CONFIGURATION
 
-train_size = 2000000
-test_size = 121594
-val_size = 216374
+train_size = 675358
+test_size = 24187
+val_size = 0
+# val_size = 216374
 
 dataset_size = train_size + val_size + test_size
 
@@ -51,7 +52,7 @@ ny = int(centery - r)
 nr = int(r * 2)
 
 # num of classes to be trained
-num_classes = 2
+num_classes = 0
 
 # choose the images size
 img_size_row = 224
@@ -124,8 +125,7 @@ def preprocessing(img_name, img_path):
     # x shape = (1, 224, 224, 3)....
 
 
-def data_generator(csvpath, train):
-
+def data_generator(csvpath):
     labs = []
     with open(csvpath, newline='') as csvfile:
         labels = csv.reader(csvfile, delimiter=',', quotechar='|')
@@ -157,7 +157,7 @@ def data_generator_prepr(csvpath, size, train):
 
             img = i[0]
 
-            img = img[ny:ny + nr, nx:nx + nr]
+            img = img[int(ny):int(ny + nr)][int(nx):int(nx + nr)]
 
             pic_path = Path + subpath + "\\" + i[0]
             picture = preprocessing(pic_path.split(".")[0], pic_path)
@@ -342,15 +342,14 @@ def step_decay_schedule(initial_lr=learning_rate_di_base, decay_factor=learning_
 
     return LearningRateScheduler(schedule, verbose=1)
 
-def main():
 
+def main():
     adam_with_lr_multipliers = Adam_lr_mult(multipliers=learning_rate_multipliers)
 
     mobile_model.compile(adam_with_lr_multipliers,
                          loss='categorical_crossentropy', metrics=['accuracy'])
 
     # TRAIN
-
 
     # callbacks
     filepath = "mobile5.best.hdf5"
@@ -365,10 +364,9 @@ def main():
                       checkpoint]
 
     mobile_model.fit_generator(train_generator, steps_per_epoch=steps_per_epoch, epochs=epochs, verbose=1,
-                               callbacks=callbacks_list,
-                               use_multiprocessing=True)
+                               callbacks=callbacks_list)
 
-    scores = mobile_model.evaluate_generator(test_generator, steps=test_size, use_multiprocessing=True, verbose=1)
+    scores = mobile_model.evaluate_generator(test_generator, steps=test_size, verbose=1)
 
     print("%s: %.2f%%" % (mobile_model.metrics_names[1], scores[1] * 100))
 

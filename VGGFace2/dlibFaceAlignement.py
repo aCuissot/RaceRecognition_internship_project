@@ -53,15 +53,14 @@ for detection in dets:
 window = dlib.image_window()
 
 # Get the aligned face images
-# Optionally:
-# images = dlib.get_face_chips(img, faces, size=160, padding=0.25)
+"""
 images = dlib.get_face_chips(img, faces, size=224, padding=0.2)
 for image in images:
     window.set_image(image)
-    dlib.hit_enter_to_continue()
+    dlib.hit_enter_to_continue() 
+"""
 
 # It is also possible to get a single chip
-image = dlib.get_face_chip(img, faces[0])
+image = dlib.get_face_chip(img, faces[0], size=224, padding=0.2)
 window.set_image(image)
-dlib.hit_enter_to_continue()
-
+# dlib.hit_enter_to_continue()
