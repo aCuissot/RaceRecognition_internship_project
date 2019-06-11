@@ -21,8 +21,8 @@
 #       pip install numpy
 
 import sys
-
 import dlib
+import cv2
 
 predictor_path = "C:\\Users\\Cuissot\\PycharmProjects\\untitled2\\VGGFace2\\shape_predictor_5_face_landmarks.dat"
 face_file_path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train\\n008704\\0017_01.jpg"
@@ -35,11 +35,15 @@ sp = dlib.shape_predictor(predictor_path)
 # Load the image using Dlib
 img = dlib.load_rgb_image(face_file_path)
 
+# could us opencv too:
+# img = cv2.imread(face_file_path)
+# img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
 # Ask the detector to find the bounding boxes of each face. The 1 in the
 # second argument indicates that we should upsample the image 1 time. This
 # will make everything bigger and allow us to detect more faces.
 dets = detector(img, 1)
-
+print(dets[0])
 num_faces = len(dets)
 if num_faces == 0:
     print("Sorry, there were no faces found in '{}'".format(face_file_path))
@@ -49,6 +53,14 @@ if num_faces == 0:
 faces = dlib.full_object_detections()
 for detection in dets:
     faces.append(sp(img, detection))
+
+# that s how we can access to the rectangle datas
+
+print(dets[0])
+print(dets[0].tl_corner().x)
+print(dets[0].tl_corner().y)
+print(dets[0].br_corner())
+
 
 window = dlib.image_window()
 

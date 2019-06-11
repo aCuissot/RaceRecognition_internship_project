@@ -2,6 +2,11 @@ from __future__ import division
 import cv2
 import time
 import sys
+import dlib
+
+predictor_path = "C:\\Users\\Cuissot\\PycharmProjects\\untitled2\\VGGFace2\\shape_predictor_5_face_landmarks.dat"
+detector = dlib.get_frontal_face_detector()
+sp = dlib.shape_predictor(predictor_path)
 
 
 def detectFaceOpenCVDnn(net, frame):
@@ -54,7 +59,7 @@ if __name__ == "__main__":
 
     frame_count = 0
     tt_opencvDnn = 0
-    while (1):
+    while 1:
         hasFrame, frame = cap.read()
         if not hasFrame:
             break
@@ -67,6 +72,23 @@ if __name__ == "__main__":
         label = "OpenCV DNN ; FPS : {:.2f}".format(fpsOpencvDnn)
         cv2.putText(outOpencvDnn, label, (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.4, (0, 0, 255), 3, cv2.LINE_AA)
 
+        img = cv2.cvtColor(outOpencvDnn, cv2.COLOR_BGR2RGB)
+
+        dets = detector(img, 1)
+
+        num_faces = len(dets)
+        if num_faces != 0:
+            faces = dlib.full_object_detections()
+            faces_coord = []
+            for detection in dets:
+                faces.append(sp(img, detection))
+                faces_coord.append(
+                    [detection.tl_corner().x, detection.tl_corner().y, detection.br_corner().x, detection.br_corner().y])
+            images = dlib.get_face_chips(img, faces, )
+            outOpencvDnn, bboxes = detectFaceOpenCVDnn(net, frame)
+
+            for index in range(len(faces_coord)):
+                outOpencvDnn[faces_coord[index][0]:faces_coord[index][2], faces_coord[index][1]:faces_coord[index][3]] = images[index]
         cv2.imshow("Face Detection Comparison", outOpencvDnn)
 
         vid_writer.write(outOpencvDnn)
