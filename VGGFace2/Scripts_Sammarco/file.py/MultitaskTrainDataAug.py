@@ -150,13 +150,13 @@ def onlinedataaug(img):
 
 
 def data_generator(csvpath):
-    eti = []
+    labs = []
     with open(csvpath, newline='') as csvfile:
-        etichetta = csv.reader(csvfile, delimiter=',', quotechar='|')
-        for row in etichetta:
-            eti.append(row)
+        labels = csv.reader(csvfile, delimiter=',', quotechar='|')
+        for row in labels:
+            labs.append(row)
 
-    p = np.array(eti)
+    p = np.array(labs)
     np.random.shuffle(p)
 
     for row in p:
@@ -190,11 +190,11 @@ def data_generator_prepr(csvpath, size):
             nr = int(r * 2)
 
 
-            immagine = i[0]
+            picture = i[0]
 
-            immagine = immagine[ny:ny + nr, nx:nx + nr]
+            picture = picture[ny:ny + nr, nx:nx + nr]
 
-            image = cv2.resize(immagine, IMAGE_SIZE, 0, 0, cv2.INTER_LINEAR)
+            image = cv2.resize(picture, IMAGE_SIZE, 0, 0, cv2.INTER_LINEAR)
 
             image = image.astype(np.float32)
             image /= 255
@@ -225,7 +225,7 @@ def data_generator_con_data_aug(csvpath, size):
         age_list = []
         for i in data:
 
-            immagine = i[0]
+            picture = i[0]
 
             x = 51
             yy = 51
@@ -256,9 +256,9 @@ def data_generator_con_data_aug(csvpath, size):
             ny = ny + gauss[0][0]
             nx = nx + gauss[1][0]
 
-            immagine = immagine[ny:ny + nr, nx:nx + nr]
+            picture = picture[ny:ny + nr, nx:nx + nr]
 
-            image = onlinedataaug(immagine)
+            image = onlinedataaug(picture)
 
             image = cv2.resize(image, IMAGE_SIZE, 0, 0, cv2.INTER_LINEAR)
 

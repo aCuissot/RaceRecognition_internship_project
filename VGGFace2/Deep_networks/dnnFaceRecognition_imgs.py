@@ -64,6 +64,7 @@ face_file_path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train\\
 imageTest = cv2.imread(face_file_path)
 outOpencvDnn = faceDetectionOnImg(imageTest)
 outOpencvDnn = cv2.cvtColor(outOpencvDnn, cv2.COLOR_RGB2BGR)
-cv2.imshow("Face Detection Comparison", outOpencvDnn)
+cv2.imshow("Face Detection and preprocessing", outOpencvDnn)
+cv2.imshow("Original", imageTest)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
