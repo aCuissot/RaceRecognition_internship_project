@@ -44,6 +44,10 @@ def detectFaceOpenCVDnn(net, frame):
             y2 = int(detections[0, 0, i, 6] * frameHeight)
             bboxes.append([x1, y1, x2, y2])
             cv2.rectangle(frameOpencvDnn, (x1, y1), (x2, y2), (0, 255, 0), int(round(frameHeight / 150)), 8)
+    frameOpencvDnn = cv2.cvtColor(frameOpencvDnn, cv2.COLOR_RGB2BGR)
+    cv2.imshow("", frameOpencvDnn)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
     return frameOpencvDnn, bboxes
 
 
@@ -59,7 +63,7 @@ def faceDetectionOnImg(img):
     return image
 
 
-face_file_path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train\\n008704\\0017_01.jpg"
+face_file_path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train\\n000002\\0001_01.jpg"
 
 imageTest = cv2.imread(face_file_path)
 outOpencvDnn = faceDetectionOnImg(imageTest)

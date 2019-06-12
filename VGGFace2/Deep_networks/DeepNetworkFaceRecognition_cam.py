@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
     frame_count = 0
     tt_opencvDnn = 0
-    while (1):
+    while 1:
         hasFrame, frame = cap.read()
         if not hasFrame:
             break
