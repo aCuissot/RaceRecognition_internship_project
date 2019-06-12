@@ -361,12 +361,17 @@ def main():
                                     mode='max'),
                       lr_sched,
                       checkpoint]
+
     print("jaaj")
+    index = 0
     for i in test_generator:
         if i[0].shape != (64, 1, 224, 224, 3):
             print("1 PAS OK,", i[0].shape)
         if i[1].shape != (64, 5):
             print("2 PAS OK,", i[1].shape)
+        print(index)
+        index += 1
+    print("end")
 
     mobile_model.fit_generator(test_generator, steps_per_epoch=steps_per_epoch, epochs=epochs, verbose=1,
                                callbacks=callbacks_list)

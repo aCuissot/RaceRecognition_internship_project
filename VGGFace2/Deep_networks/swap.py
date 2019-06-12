@@ -3,7 +3,7 @@ import cv2
 import time
 import sys
 
-img = cv2.imread("../chopi.jpg")
+img = cv2.imread("../chopi.png")
 
 
 def detectFaceOpenCVDnn(net, frame):
@@ -24,7 +24,20 @@ def detectFaceOpenCVDnn(net, frame):
             y2 = int(detections[0, 0, i, 6] * frameHeight)
             bboxes.append([x1, y1, x2, y2])
             tmp = cv2.resize(img, (x2 - max(x1, 0), y2 - max(y1, 0)))
-            frameOpencvDnn[max(y1, 0):y2, max(x1, 0): x2] = tmp
+            # I want to put logo on top-left corner, So I create a ROI
+            rows, cols, channels = tmp.shape
+            roi = frameOpencvDnn[0:rows, 0:cols]
+            # Now create a mask of logo and create its inverse mask also
+            img2gray = cv2.cvtColor(tmp, cv2.COLOR_BGR2GRAY)
+            ret, mask = cv2.threshold(img2gray, 10, 255, cv2.THRESH_BINARY)
+            mask_inv = cv2.bitwise_not(mask)
+            # Now black-out the area of logo in ROI
+            img1_bg = cv2.bitwise_and(roi, roi, mask=mask_inv)
+            # Take only region of logo from logo image.
+            img2_fg = cv2.bitwise_and(tmp, tmp, mask=mask)
+            # Put logo in ROI and modify the main image
+            dst = cv2.add(img1_bg, img2_fg)
+            frameOpencvDnn[max(y1, 0):y2, max(x1, 0): x2] = dst
             # cv2.rectangle(frameOpencvDnn, (x1, y1), (x2, y2), (0, 255, 0), int(round(frameHeight / 150)), 8)
     return frameOpencvDnn, bboxes
 
