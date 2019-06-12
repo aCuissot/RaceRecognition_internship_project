@@ -78,8 +78,8 @@ weight_decay = 5e-5
 
 print("CONFIGURATION OK")
 
-csvBBGroundTruthTrainIds = pd.read_csv("../Data/bb_landmark/loose_bb_train.csv").loc[:, "NAME_ID"]
-csvBBGroundTruthTrain = pd.read_csv("../Data/bb_landmark/loose_bb_train.csv").set_index("NAME_ID")
+csvBBGroundTruthTrainIds = pd.read_csv("../Data/bb_landmark/loose_bb_test.csv").loc[:, "NAME_ID"]
+csvBBGroundTruthTrain = pd.read_csv("../Data/bb_landmark/loose_bb_test.csv").set_index("NAME_ID")
 Path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\"
 
 
@@ -194,7 +194,7 @@ x = keras.layers.Activation('softmax', name='act_softmax')(x)
 x = keras.layers.Reshape((num_classes,), name='reshape_2')(x)
 
 mobile_model = Model(model.input, x)
-mobile_model.summary()
+# mobile_model.summary()
 
 i = 0
 for layer in mobile_model.layers:
@@ -345,9 +345,8 @@ def step_decay_schedule(initial_lr=learning_rate_di_base, decay_factor=learning_
 
 def main():
     # adam_with_lr_multipliers = Adam_lr_mult(multipliers=learning_rate_multipliers)
-    sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 
-    mobile_model.compile(optimizer=sgd, loss='categorical_crossentropy', metrics=['accuracy'])
+    mobile_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     # TRAIN
 
@@ -362,8 +361,14 @@ def main():
                                     mode='max'),
                       lr_sched,
                       checkpoint]
+    print("jaaj")
+    for i in test_generator:
+        if i[0].shape != (64, 1, 224, 224, 3):
+            print("1 PAS OK,", i[0].shape)
+        if i[1].shape != (64, 5):
+            print("2 PAS OK,", i[1].shape)
 
-    mobile_model.fit_generator(train_generator, steps_per_epoch=steps_per_epoch, epochs=epochs, verbose=1,
+    mobile_model.fit_generator(test_generator, steps_per_epoch=steps_per_epoch, epochs=epochs, verbose=1,
                                callbacks=callbacks_list)
 
     scores = mobile_model.evaluate_generator(test_generator, steps=test_size, verbose=1)
