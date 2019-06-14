@@ -112,6 +112,7 @@ def cropFace(img, imgId):
 
 def preprocessing(img_name, img_path):
     targetSize = (224, 224)  # size for mobilenet
+    print(img_path)
     img = cv2.imread(img_path)
     img_id = img_path.split("\\")[-2] + "/" + img_name.split("\\")[-1]
     img = cropFace(img, img_id)
