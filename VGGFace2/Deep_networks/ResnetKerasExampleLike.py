@@ -1,32 +1,3 @@
-"""
-#Trains a ResNet on the CIFAR10 dataset.
-ResNet v1:
-[Deep Residual Learning for Image Recognition
-](https://arxiv.org/pdf/1512.03385.pdf)
-ResNet v2:
-[Identity Mappings in Deep Residual Networks
-](https://arxiv.org/pdf/1603.05027.pdf)
-Model|n|200-epoch accuracy|Original paper accuracy |sec/epoch GTX1080Ti
-:------------|--:|-------:|-----------------------:|---:
-ResNet20   v1|  3| 92.16 %|                 91.25 %|35
-ResNet32   v1|  5| 92.46 %|                 92.49 %|50
-ResNet44   v1|  7| 92.50 %|                 92.83 %|70
-ResNet56   v1|  9| 92.71 %|                 93.03 %|90
-ResNet110  v1| 18| 92.65 %|            93.39+-.16 %|165
-ResNet164  v1| 27|     - %|                 94.07 %|  -
-ResNet1001 v1|N/A|     - %|                 92.39 %|  -
-&nbsp;
-Model|n|200-epoch accuracy|Original paper accuracy |sec/epoch GTX1080Ti
-:------------|--:|-------:|-----------------------:|---:
-ResNet20   v2|  2|     - %|                     - %|---
-ResNet32   v2|N/A| NA    %|            NA         %| NA
-ResNet44   v2|N/A| NA    %|            NA         %| NA
-ResNet56   v2|  6| 93.01 %|            NA         %|100
-ResNet110  v2| 12| 93.15 %|            93.63      %|180
-ResNet164  v2| 18|     - %|            94.54      %|  -
-ResNet1001 v2|111|     - %|            95.08+-.14 %|  -
-"""
-
 from __future__ import print_function
 import keras
 from keras.layers import Dense, Conv2D, BatchNormalization, Activation
@@ -41,32 +12,51 @@ from keras.models import Model
 from keras.datasets import cifar10
 import numpy as np
 import os
+import cv2
 
 # Training parameters
 batch_size = 32  # orig paper trained all networks with batch_size=128
-epochs = 200
+epochs = 20
 data_augmentation = True
 num_classes = 10
 
 # Subtracting pixel mean improves accuracy
 subtract_pixel_mean = True
 
-# Model parameter
-# ----------------------------------------------------------------------------
-#           |      | 200-epoch | Orig Paper| 200-epoch | Orig Paper| sec/epoch
-# Model     |  n   | ResNet v1 | ResNet v1 | ResNet v2 | ResNet v2 | GTX1080Ti
-#           |v1(v2)| %Accuracy | %Accuracy | %Accuracy | %Accuracy | v1 (v2)
-# ----------------------------------------------------------------------------
-# ResNet20  | 3 (2)| 92.16     | 91.25     | -----     | -----     | 35 (---)
-# ResNet32  | 5(NA)| 92.46     | 92.49     | NA        | NA        | 50 ( NA)
-# ResNet44  | 7(NA)| 92.50     | 92.83     | NA        | NA        | 70 ( NA)
-# ResNet56  | 9 (6)| 92.71     | 93.03     | 93.01     | NA        | 90 (100)
-# ResNet110 |18(12)| 92.65     | 93.39+-.16| 93.15     | 93.63     | 165(180)
-# ResNet164 |27(18)| -----     | 94.07     | -----     | 94.54     | ---(---)
-# ResNet1001| (111)| -----     | 92.39     | -----     | 95.08+-.14| ---(---)
-# ---------------------------------------------------------------------------
 n = 3
 
+csvPath = "../Data/labels/colab.csv"
+
+
+def preprocess(img):
+    return img
+
+
+def csvParse(filePath):
+    path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train"
+    csv = open(filePath)
+    csvTxt = csv.read()
+    csvTxt = csvTxt.replace(", ", "\n")
+    list = csvTxt.split("\n")
+    list = list[:700]
+    listLabels = []
+    listImg = []
+    for i in range(1, len(list), 2):
+        listLabels.append(int(list[i]) - 1)
+    for j in range(0, len(list), 2):
+
+        img = cv2.imread(path + "\\" + list[j].replace("/", "\\") + ".jpg")
+        img = preprocess(img)
+        listImg.append(img)
+    return listImg, listLabels
+
+
+img_list, labels_list = csvParse(csvPath)
+print(labels_list)
+print(img_list[349])
+cv2.imshow("", img_list[349])
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 # Model version
 # Orig paper: version = 1 (ResNet v1), Improved ResNet: version = 2 (ResNet v2)
 version = 1
@@ -82,6 +72,8 @@ model_type = 'ResNet%dv%d' % (depth, version)
 
 # Load the CIFAR10 data.
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+print(max(y_train))
+print(min(y_train))
 
 # Input image dimensions.
 input_shape = x_train.shape[1:]
@@ -430,7 +422,7 @@ else:
     model.fit_generator(datagen.flow(x_train, y_train, batch_size=batch_size),
                         validation_data=(x_test, y_test),
                         epochs=epochs, verbose=1, workers=4,
-                        callbacks=callbacks, steps_per_epoch=x_train.shape[0]//batch_size)
+                        callbacks=callbacks, steps_per_epoch=x_train.shape[0] // batch_size)
 
 # Score trained model.
 scores = model.evaluate(x_test, y_test, verbose=1)
