@@ -91,7 +91,7 @@ model_final.fit_generator(
 #     nb_val_samples=nb_validation_samples,
 #     callbacks=[checkpoint, early])
 
-img_path = 'C:\\Users\\Cuissot\\PycharmProjects\\untitled2\\VGGFace2\\Data\\aa_cropped.jpg'
+img_path = 'C:\\Users\\Cuissot\\PycharmProjects\\untitled2\\VGGFace2\\Data\\aa_cropped.png'
 img = image.load_img(img_path, target_size=(224, 224))
 x = image.img_to_array(img)
 x = np.expand_dims(x, axis=0)
