@@ -7,7 +7,7 @@ print(train_it)
 val_it = datagen.flow_from_directory("C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\test", class_mode='binary')
 test_it = datagen.flow_from_directory("C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\test", class_mode='binary')
 model = VGG16(weights='imagenet', include_top=False, classes=4)
-model.compile
+model.compile()
 model.fit_generator(train_it, steps_per_epoch=16, validation_data=val_it, validation_steps=8)
 loss = model.evaluate_generator(test_it, steps=24)
 # yhat = model.predict_generator(predict_it, steps=24)
