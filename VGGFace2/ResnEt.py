@@ -9,13 +9,14 @@ import numpy as np
 from keras.preprocessing.image import ImageDataGenerator
 
 
-# def convert_to_one_hot(Y, C):
-#     Y = np.eye(C)[Y.reshape(-1)].T
-#     return Y
+def convert_to_one_hot(Y, C):
+    Y = np.eye(C)[Y.reshape(-1)].T
+    return Y
 
-# only a resize to match with the network
+
+# only a preprocessing to match with the network
 def preprocessing(img):
-    img = cv2.resize(img, (224, 224), interpolation=cv2.INTER_AREA)
+    # img = cv2.resize(img, (224, 224), interpolation=cv2.INTER_AREA)
     img = image.img_to_array(img)
     img = np.expand_dims(img, axis=0)
     img = preprocess_input(img)
@@ -23,8 +24,8 @@ def preprocessing(img):
 
 
 # create a data generator
-# datagen = ImageDataGenerator(preprocessing_function=preprocessing)
-datagen = ImageDataGenerator()
+datagen = ImageDataGenerator(preprocessing_function=preprocessing)
+# datagen = ImageDataGenerator()
 
 # load and iterate training dataset
 train_it = datagen.flow_from_directory('C:\\Users\\Cuissot\\PycharmProjects\\Data\\Network_test_dataset\\train',
@@ -34,8 +35,9 @@ train_it = datagen.flow_from_directory('C:\\Users\\Cuissot\\PycharmProjects\\Dat
 #                                       class_mode='binary', target_size=(224, 224), batch_size=64)
 
 batchX, batchy = train_it.next()
-print(batchy)
-# batchy = convert_to_one_hot(batchy, 6).T
+
+print(type(batchy))
+# batchy = convert_to_one_hot(batchy, 4).T
 
 print('Batch shape=%s, min=%.3f, max=%.3f' % (batchX.shape, batchX.min(), batchX.max()))
 print('Batch labels shape=%s, min=%.3f, max=%.3f' % (batchy.shape, batchy.min(), batchy.max()))
@@ -48,6 +50,8 @@ x = Dropout(0.7)(x)
 predictions = Dense(num_classes, activation='softmax')(x)
 model_final = Model(inputs=model.input, outputs=predictions)
 from keras.optimizers import SGD, Adam
+
+model_final.summary()
 
 # sgd = SGD(lr=lrate, momentum=0.9, decay=decay, nesterov=False)
 adam = Adam(lr=0.0001)
