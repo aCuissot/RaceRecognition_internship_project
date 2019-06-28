@@ -7,8 +7,7 @@ from keras import backend as k
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler, TensorBoard, EarlyStopping
 import numpy as np
 from keras.preprocessing import image
-from keras.applications.mobilenet import preprocess_input
-
+from keras.applications.mobilenet import preprocess_input, decode_predictions
 
 img_width, img_height = 224, 224
 train_data_dir = 'C:\\Users\\Cuissot\\PycharmProjects\\Data\\Network_test_dataset\\train'
@@ -90,7 +89,7 @@ model_final.fit_generator(
 #     validation_data=validation_generator,
 #     nb_val_samples=nb_validation_samples,
 #     callbacks=[checkpoint, early])
-
+"""
 img_path = 'C:\\Users\\Cuissot\\PycharmProjects\\untitled2\\VGGFace2\\Data\\aa_cropped.png'
 img = image.load_img(img_path, target_size=(224, 224))
 x = image.img_to_array(img)
@@ -100,4 +99,5 @@ x = preprocess_input(x)
 preds = model.predict(x)
 # decode the results into a list of tuples (class, description, probability)
 # (one such list for each sample in the batch)
-print('Predicted:', preds)
+print('Predicted:', decode_predictions(preds, top=3)[0])
+"""
