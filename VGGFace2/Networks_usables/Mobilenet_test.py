@@ -13,18 +13,18 @@ from PIL import Image
 from sklearn.metrics import confusion_matrix
 
 img_width, img_height = 224, 224
-test_data_dir = '/mnt/sdc1/acuissot/Faces_labeled/test'
+test_data_dir = 'C:\\Users\\Cuissot\\PycharmProjects\\Data\\test'
 
 nb_train_samples = 3141443
 # nb_validation_samples = 466
 batch_size = 64
 epochs = 2
 nb_classes = 4
+steps_nb = int(169050/64)
 
 model_final = keras.models.load_model("mobilenet_retrain.h5")
-model_final.history
 # Initiate the train and test generators with data Augumentation
-
+print("model loaded")
 test_datagen = ImageDataGenerator(
     rescale=1. / 255,
     horizontal_flip=True,
@@ -41,8 +41,8 @@ test_generator = test_datagen.flow_from_directory(
     class_mode="categorical")
 
 # Train the model
-eval = model_final.evaluate_generator(test_generator, batch_size=64)
-predictions = model_final.predict_generator(test_datagen)
+eval = model_final.evaluate_generator(test_generator, steps=steps_nb, verbose=1)
+predictions = model_final.predict_generator(test_generator, steps=steps_nb, verbose=1)
 y_pred = (predictions > 0.5)
 matrix = confusion_matrix(y_pred.labels.argmax(axis=1), test_generator.labels.argmax(axis=-1))
 print(matrix)
