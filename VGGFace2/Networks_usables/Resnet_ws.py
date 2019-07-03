@@ -9,10 +9,11 @@ import numpy as np
 from keras.preprocessing import image
 from keras.applications.resnet50 import preprocess_input
 
-
 img_width, img_height = 224, 224
 train_data_dir = '/mnt/sdc1/acuissot/Faces_labeled/train'
+# to early stop training if it seem stable, we use st set as validation, it shouldn't intervene in training
 validation_data_dir = '/mnt/sdc1/acuissot/Faces_labeled/test'
+
 nb_train_samples = 3141443
 nb_validation_samples = 169050
 batch_size = 64

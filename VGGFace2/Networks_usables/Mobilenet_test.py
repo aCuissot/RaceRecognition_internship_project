@@ -22,7 +22,7 @@ epochs = 2
 nb_classes = 4
 
 model_final = keras.models.load_model("mobilenet_retrain.h5")
-
+model_final.history
 # Initiate the train and test generators with data Augumentation
 
 test_datagen = ImageDataGenerator(
@@ -40,8 +40,6 @@ test_generator = test_datagen.flow_from_directory(
     batch_size=batch_size,
     class_mode="categorical")
 
-
-
 # Train the model
 eval = model_final.evaluate_generator(test_generator, batch_size=64)
 predictions = model_final.predict_generator(test_datagen)
@@ -52,4 +50,3 @@ save_matrix = open("confusion_matrix.txt", "w")
 txt = "Evaluation\n" + str(eval)
 txt += "\nConf Matrix:\n" + str(matrix)
 save_matrix.write(txt)
-

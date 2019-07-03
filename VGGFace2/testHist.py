@@ -20,7 +20,7 @@ model.add(Dense(1, kernel_initializer='uniform', activation='sigmoid'))
 # Compile model
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 # Fit the model
-history = model.fit(X, Y, validation_split=0.33, epochs=150, batch_size=10, verbose=0)
+history = model.fit(X, Y, validation_split=0.33, epochs=150, batch_size=10, verbose=1)
 # list all data in history
 print(history.history.keys())
 # summarize history for accuracy
