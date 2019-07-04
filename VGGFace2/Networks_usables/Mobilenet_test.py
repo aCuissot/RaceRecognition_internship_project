@@ -36,17 +36,19 @@ test_datagen = ImageDataGenerator(
 
 test_generator = test_datagen.flow_from_directory(
     test_data_dir,
+    shuffle=False,
     target_size=(img_height, img_width),
     batch_size=batch_size,
     class_mode="categorical")
 
 # Train the model
-eval = model_final.evaluate_generator(test_generator, steps=steps_nb, verbose=1)
+evalu = model_final.evaluate_generator(test_generator, steps=steps_nb, verbose=1)
 predictions = model_final.predict_generator(test_generator, steps=steps_nb, verbose=1)
-y_pred = (predictions > 0.5)
-matrix = confusion_matrix(y_pred.labels.argmax(axis=1), test_generator.labels.argmax(axis=-1))
+y_pred = np.rint(predictions)
+y_true = test_generator.classes
+matrix = confusion_matrix(y_true, y_pred)
 print(matrix)
 save_matrix = open("confusion_matrix.txt", "w")
-txt = "Evaluation\n" + str(eval)
+txt = "Evaluation\n" + str(evalu)
 txt += "\nConf Matrix:\n" + str(matrix)
 save_matrix.write(txt)
