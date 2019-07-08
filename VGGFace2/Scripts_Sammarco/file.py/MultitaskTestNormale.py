@@ -372,10 +372,10 @@ print("\n")
 
 # test_generator=data_generator_test(csv1,1,pathimg)
 
-# scores = res_model_multitask.evaluate_generator(test_generator,steps=test_size,verbose=1)
+# scores = nas_model_multitask.evaluate_generator(test_generator,steps=test_size,verbose=1)
 # print("Risultati su ChaLearnLap - completo")
-# for i in range(0,len(res_model_multitask.metrics_names)):
-#    print(res_model_multitask.metrics_names[i]+" :  " +str(scores[i]))
+# for i in range(0,len(nas_model_multitask.metrics_names)):
+#    print(nas_model_multitask.metrics_names[i]+" :  " +str(scores[i]))
 # print("\n")
 
 

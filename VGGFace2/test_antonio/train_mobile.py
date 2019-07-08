@@ -62,7 +62,7 @@ outS = Dense(NUM_CLASSES, activation="softmax", name='outS')(outS)
 mobile_model = Model(source_model.input, outS)  # Modelo solo gender
 mobile_model_multitask = mobile_model
 mobile_model_multitask.summary()
-# plot_model(res_model_multitask, to_file=os.path.join(dirnm, 'MobileNetv2.png'), show_shapes=True)
+# plot_model(nas_model_multitask, to_file=os.path.join(dirnm, 'MobileNetv2.png'), show_shapes=True)
 
 
 # Setto i moltiplicatori del learning rate
@@ -141,7 +141,7 @@ if __name__ == '__main__':
         # y_pred = [1]*y_true.shape[0] # Per provare, dovrebbe dare recall=1
         conf = confusion_matrix(y_true, y_pred, [0, 1, 2, 3])
         print(conf)
-    """ res_model_multitask.fit_generator(train_generator,
+    """ nas_model_multitask.fit_generator(train_generator,
                                 steps_per_epoch=steps_per_epoch, epochs=epochs,
                                 verbose=1, callbacks=callbacks_list,
                                 validation_data=val_generator, validation_steps=validation_steps, initial_epoch=initial_epoch
