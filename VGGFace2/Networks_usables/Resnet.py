@@ -23,7 +23,7 @@ model = applications.ResNet50(include_top=False, weights=None, input_shape=(img_
 
 # Freeze the layers which you don't want to train. Here I am freezing the all layers.
 for layer in model.layers[:]:
-    layer.trainable = False
+    layer.trainable = True
 
 # Adding custom Layer
 # We only add
