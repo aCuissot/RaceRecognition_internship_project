@@ -19,7 +19,7 @@ epochs = 2
 nb_classes = 4
 
 model = applications.MobileNet(include_top=False, weights=None, input_shape=(img_width, img_height, 3))
-
+model.summary()
 # Freeze the layers which you don't want to train. Here I am freezing the all layers.
 for layer in model.layers[:]:
     layer.trainable = False

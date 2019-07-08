@@ -24,8 +24,8 @@ from keras import backend as K
 
 from VGGFace2.test_antonio.dataset_tools import load_for_training, load_for_test, dataset_size, NUM_CLASSES
 
-batch_size = 64
-epochs = 64
+batch_size = 4
+epochs = 20
 
 # learning rate schedule
 initial_learning_rate = 0.005
@@ -35,22 +35,21 @@ weight_decay = 5e-5
 MULTIPLIER_FOR_OLD_LAYERS = 0.1
 
 siz = 96
-mul = 0.75
 
-dirnm = "exp-inp%d-mul%s" % (siz, str(mul))
+dirnm = "exp-inp%d" % (siz)
 shape = (1, siz, siz, 3)
 
 print("Setting up for %s." % dirnm)
 
 # Carico la rete di base
-# model = keras.applications.mobilenet.MobileNet(input_shape=(224,224,3))
-from VGGFace2.test_antonio.mobilenet_v2_keras import MobileNetv2, relu6
+# model = keras.applications.resnet50.ResNet(input_shape=(224,224,3))
+from keras.applications.resnet50 import ResNet50
 
-source_model = MobileNetv2((shape[1], shape[2], shape[3]), 1001, mul)
-source_model.load_weights('mobilenet_v2_0.75_96.h5')
+source_model = ResNet50(include_top=False, input_shape=(shape[1], shape[2], shape[3]), classes=4)
 source_model.summary()
+# source_model.load_weights('resnet_v2_0.75_96.h5')
 original_layers = [x.name for x in source_model.layers]
-x = source_model.get_layer('reshape_1').output  # Ultimo livello della rete originale, senza dropout
+x = source_model.get_layer('res5c_branch2c').output  # Ultimo livello della rete originale, senza dropout
 
 # Modifico la rete
 # x = keras.layers.GlobalAveragePooling2D()(last_layer)
@@ -59,14 +58,14 @@ x = keras.layers.Dropout(0.5, name='dropout')(x)
 x = keras.layers.Flatten()(x)
 outS = x
 outS = Dense(NUM_CLASSES, activation="softmax", name='outS')(outS)
-mobile_model = Model(source_model.input, outS)  # Modelo solo gender
-mobile_model_multitask = mobile_model
-mobile_model_multitask.summary()
-# plot_model(res_model_multitask, to_file=os.path.join(dirnm, 'MobileNetv2.png'), show_shapes=True)
+res_model = Model(source_model.input, outS)  # Modelo solo gender
+res_model_multitask = res_model
+res_model_multitask.summary()
+# plot_model(res_model_multitask, to_file=os.path.join(dirnm, 'ResNet50.png'), show_shapes=True)
 
 
 # Setto i moltiplicatori del learning rate
-for layer in mobile_model_multitask.layers:
+for layer in res_model_multitask.layers:
     layer.trainable = True
 learning_rate_multipliers = {}
 for layer_name in original_layers:
@@ -83,13 +82,13 @@ from VGGFace2.test_antonio.training_tools import step_decay_schedule
 
 adam_with_lr_multipliers = Adam_lr_mult(lr=initial_learning_rate, decay=weight_decay,
                                         multipliers=learning_rate_multipliers)
-mobile_model_multitask.compile(adam_with_lr_multipliers,
-                               loss=['categorical_crossentropy'], metrics=['accuracy'])
+res_model_multitask.compile(adam_with_lr_multipliers,
+                            loss=['categorical_crossentropy'], metrics=['accuracy'])
 
 # Preparo le callback
 if not os.path.isdir(dirnm):
     os.mkdir(dirnm)
-filepath = os.path.join(dirnm, "mobile.{epoch:02d}-{val_loss:.2f}.hdf5")
+filepath = os.path.join(dirnm, "resnet.{epoch:02d}-{val_loss:.2f}.hdf5")
 logdir = os.path.join(dirnm, 'tb_logs')
 lr_sched = step_decay_schedule(initial_lr=initial_learning_rate, decay_factor=learning_rate_decay_factor,
                                step_size=learning_rate_decay_epochs)
@@ -104,28 +103,28 @@ if __name__ == '__main__':
     print("Training for %s is starting..." % dirnm)
 
     # Carica i dataset
-    val_dataset = '../Faces_labeled/test'
-    train_size = 2000000  # IMPORTANTE, SETTARE QUESTO VALORE!
+    val_dataset = './test1'
+    train_size = 4  # IMPORTANTE, SETTARE QUESTO VALORE!
     val_size = dataset_size(val_dataset)
     steps_per_epoch = train_size / batch_size
     validation_steps = val_size / batch_size
 
-    train_generator = load_for_training('../Faces_labeled/train', batch_size, shape)
+    train_generator = load_for_training('./test1', batch_size, shape)
     val_generator = load_for_test(val_dataset, batch_size, shape)
 
     initial_epoch = 0
     if len(sys.argv) > 1:
         if sys.argv[1].isdigit():
             initial_epoch = int(sys.argv[1])
-            ckpntlist = glob(os.path.join(dirnm, "mobile.%02d-*.hdf5" % initial_epoch))
+            ckpntlist = glob(os.path.join(dirnm, "resnet.%02d-*.hdf5" % initial_epoch))
         else:
             ckpntlist = [sys.argv[1]]
-        mobile_model_multitask.load_weights(ckpntlist[0])
+        res_model_multitask.load_weights(ckpntlist[0])
         from VGGFace2.test_antonio.dataset_tools import load_for_pred
 
         data, Y_true = load_for_pred(val_dataset, batch_size, shape)
         print(Y_true.shape)
-        Y_pred = mobile_model_multitask.predict(data, batch_size, verbose=1)
+        Y_pred = res_model_multitask.predict(data, batch_size, verbose=1)
         print(Y_pred.shape)
         print(Y_true.shape)
         y_pred = np.argmax(Y_pred, axis=1)
@@ -141,8 +140,9 @@ if __name__ == '__main__':
         # y_pred = [1]*y_true.shape[0] # Per provare, dovrebbe dare recall=1
         conf = confusion_matrix(y_true, y_pred, [0, 1, 2, 3])
         print(conf)
-    """ res_model_multitask.fit_generator(train_generator,
-                                steps_per_epoch=steps_per_epoch, epochs=epochs,
-                                verbose=1, callbacks=callbacks_list,
-                                validation_data=val_generator, validation_steps=validation_steps, initial_epoch=initial_epoch
-                                )#use_multiprocessing=True, workers=41, max_queue_size=32, ) """
+    res_model_multitask.fit_generator(train_generator,
+                                      steps_per_epoch=steps_per_epoch, epochs=epochs,
+                                      verbose=1, callbacks=callbacks_list,
+                                      validation_data=val_generator, validation_steps=validation_steps,
+                                      initial_epoch=initial_epoch
+                                      )  # use_multiprocessing=True, workers=41, max_queue_size=32, )

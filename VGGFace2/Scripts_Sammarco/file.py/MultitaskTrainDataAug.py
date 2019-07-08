@@ -527,7 +527,7 @@ mobile_model_multitask.fit_generator(train_generator, steps_per_epoch=steps_per_
                                      callbacks=callbacks_list,
                                      validation_data=val_generator, validation_steps=validation_steps)
 
-# scores = mobile_model_multitask.evaluate_generator(test_generator,steps=test_size, verbose=1) #use_multiprocessing=True
+# scores = res_model_multitask.evaluate_generator(test_generator,steps=test_size, verbose=1) #use_multiprocessing=True
 
 
-# print("%s: %.2f%%" % (mobile_model.metrics_names[1], scores[1] * 100))
+# print("%s: %.2f%%" % (res_model.metrics_names[1], scores[1] * 100))

@@ -1,4 +1,5 @@
-from dataset_tools import load_for_pred
+from VGGFace2.test_antonio.dataset_tools import load_for_pred
+import numpy as np
 
 mobile_model_multitask.load_weights(ckpntlist[0])
         

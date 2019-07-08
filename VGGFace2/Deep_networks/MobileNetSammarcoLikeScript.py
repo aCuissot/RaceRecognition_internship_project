@@ -195,7 +195,7 @@ x = keras.layers.Activation('softmax', name='act_softmax')(x)
 x = keras.layers.Reshape((num_classes,), name='reshape_2')(x)
 
 mobile_model = Model(model.input, x)
-# mobile_model.summary()
+# res_model.summary()
 
 i = 0
 for layer in mobile_model.layers:
