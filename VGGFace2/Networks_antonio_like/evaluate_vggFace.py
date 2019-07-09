@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 import sys
 import os
 from glob import glob
@@ -24,8 +25,8 @@ from keras import backend as K
 
 from VGGFace2.Networks_antonio_like.dataset_tools import load_for_training, load_for_test, dataset_size, NUM_CLASSES
 
-batch_size = 4
-epochs = 20
+batch_size = 64
+epochs = 64
 
 # learning rate schedule
 initial_learning_rate = 0.005
@@ -41,27 +42,24 @@ shape = (1, siz, siz, 3)
 
 print("Setting up for %s." % dirnm)
 
-# Loading original network.
-# model = keras.applications.vgg16.VGG16(input_shape=(224,224,3))
+# Load the basic network
+# model = keras.applications.mobilenet.MobileNet(input_shape=(224,224,3))
 from VGGFace2.Networks_antonio_like.vggFace import VGGFace
-#using default model! vgg16
-source_model = VGGFace(include_top=False, input_shape=(shape[1], shape[2], shape[3]), classes=4)
-source_model.summary()
-# source_model.load_weights('vgg16.75_96.h5')
+source_model = VGGFace(input_shape=(shape[1], shape[2], shape[3]), include_top=False, classes=4)
 original_layers = [x.name for x in source_model.layers]
-x = source_model.get_layer('conv5_3').output  # Ultimo livello della rete originale, senza dropout
+x = source_model.get_layer('conv5_3').output  # last level of the original network without dropout
 
-# Modify network
+# Modify the network
 # x = keras.layers.GlobalAveragePooling2D()(last_layer)
 # x = keras.layers.Reshape((1, 1, 1024), name='reshape_1')(x)
 x = keras.layers.Dropout(0.5, name='dropout')(x)
 x = keras.layers.Flatten()(x)
 outS = x
 outS = Dense(NUM_CLASSES, activation="softmax", name='outS')(outS)
-vgg_model = Model(source_model.input, outS)  # Modelo solo gender
+vgg_model = Model(source_model.input, outS)
 vgg_model_multitask = vgg_model
 vgg_model_multitask.summary()
-# plot_model(nas_model_multitask, to_file=os.path.join(dirnm, 'vggFace.png'), show_shapes=True)
+# plot_model(vgg_model_multitask, to_file=os.path.join(dirnm, 'VGG16.png'), show_shapes=True)
 
 
 # based on the learning rate multipliers
@@ -70,12 +68,12 @@ for layer in vgg_model_multitask.layers:
 learning_rate_multipliers = {}
 for layer_name in original_layers:
     learning_rate_multipliers[layer_name] = MULTIPLIER_FOR_OLD_LAYERS
-# I livelli aggiunti avranno lr multiplier = 1
+# added levels will have lr_multiplier = 1
 new_layers = [x.name for x in source_model.layers if x.name not in original_layers]
 for layer_name in new_layers:
     learning_rate_multipliers[layer_name] = 1
 
-# Preparing optimization with lr_decay
+# Prepare optimization with the lr_decay
 from VGGFace2.Networks_antonio_like.training_tools import Adam_lr_mult
 from VGGFace2.Networks_antonio_like.training_tools import step_decay_schedule
 
@@ -95,53 +93,52 @@ checkpoint = ModelCheckpoint(filepath, verbose=1, save_best_only=False)
 tbCallBack = keras.callbacks.TensorBoard(log_dir=logdir, write_graph=True, write_images=True)
 callbacks_list = [lr_sched, checkpoint, tbCallBack]
 
-# Training
+# Evaluate
 
 if __name__ == '__main__':
 
-    print("Training for %s is starting..." % dirnm)
+    print("Evaluation for %s is starting..." % dirnm)
 
-    # Loading dataset
+    # Load the dataset
     val_dataset = './test1'
-    train_size = 4  # IMPORTANT, SET A VALUE!
-    val_size = dataset_size(val_dataset)
-    steps_per_epoch = train_size / batch_size
-    validation_steps = val_size / batch_size
 
-    train_generator = load_for_training('./test1', batch_size, shape)
-    val_generator = load_for_test(val_dataset, batch_size, shape)
+    ckpntlist = ['vggFace.20-0.00.hdf5']
+    # ckpntlist = [sys.argv[1]]
+    vgg_model_multitask.load_weights(dirnm + '/' + ckpntlist[0])
+    from VGGFace2.Networks_antonio_like.dataset_tools import load_for_pred
+    from VGGFace2.Networks_antonio_like.dataset_tools import evaluate_performance
 
-    initial_epoch = 0
-    if len(sys.argv) > 1:
-        if sys.argv[1].isdigit():
-            initial_epoch = int(sys.argv[1])
-            ckpntlist = glob(os.path.join(dirnm, "vggFace.%02d-*.hdf5" % initial_epoch))
-        else:
-            ckpntlist = [sys.argv[1]]
-        vgg_model_multitask.load_weights(ckpntlist[0])
-        from VGGFace2.Networks_antonio_like.dataset_tools import load_for_pred
+    """ data, Y_true = load_for_pred(val_dataset, batch_size, shape)
+    print(Y_true.shape)
+    Y_pred = vgg_model_multitask.predict(data, batch_size, verbose=1) """
+    Y_pred, Y_true = evaluate_performance(val_dataset, batch_size, shape, vgg_model_multitask)
+    print(Y_pred.shape)
+    print(Y_true.shape)
+    y_pred = Y_pred  # np.argmax(Y_pred, axis=1)
+    y_true = np.argmax(Y_true, axis=1)
+    print(y_pred.shape)
+    print(y_true.shape)
+    print(y_pred)
+    print('Confusion Matrix')
+    # predneg predpos
+    #  [[4178  659]  < True negative
+    #   [ 975 3861]] < True positive
+    from sklearn.metrics import classification_report, confusion_matrix
 
-        data, Y_true = load_for_pred(val_dataset, batch_size, shape)
-        print(Y_true.shape)
-        Y_pred = vgg_model_multitask.predict(data, batch_size, verbose=1)
-        print(Y_pred.shape)
-        print(Y_true.shape)
-        y_pred = np.argmax(Y_pred, axis=1)
-        y_true = np.argmax(Y_true, axis=1)
-        print(y_pred.shape)
-        print(y_true.shape)
-        print('Confusion Matrix')
-        # predneg predpos
-        #  [[4178  659]  < True negative
-        #   [ 975 3861]] < True positive
-        from sklearn.metrics import classification_report, confusion_matrix
+    # y_pred = [1]*y_true.shape[0] # To try, you should give recall=1
+    conf = confusion_matrix(y_true, y_pred, [0, 1, 2, 3])
+    print(conf)
+    conf_pc = [[None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
+    mat_sum = 0
+    for row in range(NUM_CLASSES):
+        for col in range(NUM_CLASSES):
+            conf_pc[row][col] = conf[row][col] / sum(conf[row])
+            mat_sum += conf[row][col]
+    print(conf_pc)
+    # we can probably use smthg like that:
+    # conf_pc2 = confusion_matrix(y_true, y_pred, [0, 1, 2, 3], normalize=True)
 
-        # y_pred = [1]*y_true.shape[0] # To try, it should give recall = 1
-        conf = confusion_matrix(y_true, y_pred, [0, 1, 2, 3])
-        print(conf)
-    vgg_model_multitask.fit_generator(train_generator,
-                                      steps_per_epoch=steps_per_epoch, epochs=epochs,
-                                      verbose=1, callbacks=callbacks_list,
-                                      validation_data=val_generator, validation_steps=validation_steps,
-                                      initial_epoch=initial_epoch
-                                      )  # use_multiprocessing=True, workers=41, max_queue_size=32, )
+    acc = (conf[0][0] + conf[1][1] + conf[2][2] + conf[3][3]) / mat_sum
+    print(acc)
+
+

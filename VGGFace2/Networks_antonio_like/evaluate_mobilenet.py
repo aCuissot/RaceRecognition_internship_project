@@ -136,7 +136,7 @@ if __name__ == '__main__':
     for row in range(NUM_CLASSES):
         for col in range(NUM_CLASSES):
             conf_pc[row][col] = conf[row][col] / sum(conf[row])
-            mat_sum += conf_pc[row][col]
+            mat_sum += conf[row][col]
     print(conf_pc)
     acc = (conf[0][0] + conf[1][1] + conf[2][2] + conf[3][3]) / mat_sum
     print(acc)
