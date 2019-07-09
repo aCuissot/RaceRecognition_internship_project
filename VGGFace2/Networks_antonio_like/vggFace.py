@@ -4,7 +4,7 @@
 - [VGGFace2: A dataset for recognising faces across pose and age](http://www.robots.ox.ac.uk/~vgg/data/vgg_face2/vggface2.pdf)
 '''
 from __future__ import print_function
-from VGGFace2.test_antonio.vggFace_models import RESNET50, VGG16, SENET50
+from VGGFace2.Networks_antonio_like.vggFace_models import RESNET50, VGG16, SENET50
 
 
 def VGGFace(include_top=True, model='vgg16', weights='vggface',

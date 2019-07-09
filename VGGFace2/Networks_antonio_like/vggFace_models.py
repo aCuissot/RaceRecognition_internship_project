@@ -12,7 +12,7 @@ from keras_applications.imagenet_utils import _obtain_input_shape
 from keras.utils import layer_utils
 from keras.utils.data_utils import get_file
 from keras import backend as K
-import VGGFace2.test_antonio.vggFace_utils as utils
+import VGGFace2.Networks_antonio_like.vggFace_utils as utils
 from keras.engine.topology import get_source_inputs
 import warnings
 from keras.models import Model
