@@ -16,3 +16,7 @@ In the bb_landmark folder, we got ground truth for the face (`loose_bb_*.csv`) a
 Lab gave me some scripts done by other students (`Script_*` folders)
 
 In `Data/labels`, `homgeneous*.txt` are subsets of train and test sets containing the same number of each ethnicity to perform a better learning.
+
+There are more and more scripts which are not used now, I should do a refactor to clear that
+
+The working Networks are in `Networks_antonio_like` directory
