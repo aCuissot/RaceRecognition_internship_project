@@ -34,24 +34,26 @@ learning_rate_decay_epochs = 6
 weight_decay = 5e-5
 MULTIPLIER_FOR_OLD_LAYERS = 0.1
 
-siz = 96
+siz = 331
 
-dirnm = "exp-inp%d" % (siz)
+dirnm = "exp-inp%d" % siz
 shape = (1, siz, siz, 3)
 
 print("Setting up for %s." % dirnm)
-
-# Carico la rete di base
+0
+# Loading original network
 # model = keras.applications.nasnet.NASNetLarge(input_shape=(224,224,3))
 from keras.applications.nasnet import NASNetLarge
 
+# can t change shape...
+# https://github.com/keras-team/keras-applications/issues/78
 source_model = NASNetLarge(include_top=False, input_shape=(shape[1], shape[2], shape[3]), classes=4)
 source_model.summary()
 # source_model.load_weights('nasnet.75_96.h5')
 original_layers = [x.name for x in source_model.layers]
-x = source_model.get_layer('block5_conv3').output  # Ultimo livello della rete originale, senza dropout
+x = source_model.get_layer('normal_concat_18').output  # Ultimo livello della rete originale, senza dropout
 
-# Modifico la rete
+# Modifying network
 # x = keras.layers.GlobalAveragePooling2D()(last_layer)
 # x = keras.layers.Reshape((1, 1, 1024), name='reshape_1')(x)
 x = keras.layers.Dropout(0.5, name='dropout')(x)
@@ -64,19 +66,18 @@ nas_model_multitask.summary()
 # plot_model(nas_model_multitask, to_file=os.path.join(dirnm, 'nasnet.png'), show_shapes=True)
 
 
-# Setto i moltiplicatori del learning rate
+# based on the learning rate multipliers
 for layer in nas_model_multitask.layers:
     layer.trainable = True
 learning_rate_multipliers = {}
 for layer_name in original_layers:
     learning_rate_multipliers[layer_name] = MULTIPLIER_FOR_OLD_LAYERS
-# I livelli aggiunti avranno lr multiplier = 1
+# Added levels have lr multiplier = 1
 new_layers = [x.name for x in source_model.layers if x.name not in original_layers]
 for layer_name in new_layers:
     learning_rate_multipliers[layer_name] = 1
 
-# Ottimizza gender e age
-# Preparo l'ottimizzatore con il lr decay
+# Preparing optimization with lr decay
 from VGGFace2.test_antonio.training_tools import Adam_lr_mult
 from VGGFace2.test_antonio.training_tools import step_decay_schedule
 
@@ -85,7 +86,7 @@ adam_with_lr_multipliers = Adam_lr_mult(lr=initial_learning_rate, decay=weight_d
 nas_model_multitask.compile(adam_with_lr_multipliers,
                             loss=['categorical_crossentropy'], metrics=['accuracy'])
 
-# Preparo le callback
+# Preparing callback
 if not os.path.isdir(dirnm):
     os.mkdir(dirnm)
 filepath = os.path.join(dirnm, "nasnet.{epoch:02d}-{val_loss:.2f}.hdf5")
@@ -96,15 +97,15 @@ checkpoint = ModelCheckpoint(filepath, verbose=1, save_best_only=False)
 tbCallBack = keras.callbacks.TensorBoard(log_dir=logdir, write_graph=True, write_images=True)
 callbacks_list = [lr_sched, checkpoint, tbCallBack]
 
-# Addestra
+# Training
 
 if __name__ == '__main__':
 
     print("Training for %s is starting..." % dirnm)
 
-    # Carica i dataset
+    # Loading dataset
     val_dataset = './test1'
-    train_size = 4  # IMPORTANTE, SETTARE QUESTO VALORE!
+    train_size = 4  # IMPORTANT, SET A VALUE!
     val_size = dataset_size(val_dataset)
     steps_per_epoch = train_size / batch_size
     validation_steps = val_size / batch_size
@@ -137,7 +138,7 @@ if __name__ == '__main__':
         #   [ 975 3861]] < True positive
         from sklearn.metrics import classification_report, confusion_matrix
 
-        # y_pred = [1]*y_true.shape[0] # Per provare, dovrebbe dare recall=1
+        # y_pred = [1]*y_true.shape[0] # To try, it should give recall = 1
         conf = confusion_matrix(y_true, y_pred, [0, 1, 2, 3])
         print(conf)
     nas_model_multitask.fit_generator(train_generator,

@@ -42,7 +42,7 @@ shape = (1, siz, siz, 3)
 
 print("Setting up for %s." % dirnm)
 
-# Carico la rete di base
+# Load the original network
 # model = keras.applications.mobilenet.MobileNet(input_shape=(224,224,3))
 from VGGFace2.test_antonio.mobilenet_v2_keras import MobileNetv2, relu6
 
@@ -52,7 +52,7 @@ source_model.summary()
 original_layers = [x.name for x in source_model.layers]
 x = source_model.get_layer('reshape_1').output  # Ultimo livello della rete originale, senza dropout
 
-# Modifico la rete
+# Modifying the network
 # x = keras.layers.GlobalAveragePooling2D()(last_layer)
 # x = keras.layers.Reshape((1, 1, 1024), name='reshape_1')(x)
 x = keras.layers.Dropout(0.5, name='dropout')(x)
@@ -65,19 +65,18 @@ mobile_model_multitask.summary()
 # plot_model(nas_model_multitask, to_file=os.path.join(dirnm, 'MobileNetv2.png'), show_shapes=True)
 
 
-# Setto i moltiplicatori del learning rate
+# based on the learning rate multipliers
 for layer in mobile_model_multitask.layers:
     layer.trainable = True
 learning_rate_multipliers = {}
 for layer_name in original_layers:
     learning_rate_multipliers[layer_name] = MULTIPLIER_FOR_OLD_LAYERS
-# I livelli aggiunti avranno lr multiplier = 1
+# Added levels have lr multiplier = 1
 new_layers = [x.name for x in source_model.layers if x.name not in original_layers]
 for layer_name in new_layers:
     learning_rate_multipliers[layer_name] = 1
 
-# Ottimizza gender e age
-# Preparo l'ottimizzatore con il lr decay
+# Preparing optimization with lr_decay
 from VGGFace2.test_antonio.training_tools import Adam_lr_mult
 from VGGFace2.test_antonio.training_tools import step_decay_schedule
 
@@ -86,7 +85,7 @@ adam_with_lr_multipliers = Adam_lr_mult(lr=initial_learning_rate, decay=weight_d
 mobile_model_multitask.compile(adam_with_lr_multipliers,
                                loss=['categorical_crossentropy'], metrics=['accuracy'])
 
-# Preparo le callback
+# Preparing callback
 if not os.path.isdir(dirnm):
     os.mkdir(dirnm)
 filepath = os.path.join(dirnm, "mobile.{epoch:02d}-{val_loss:.2f}.hdf5")
@@ -97,7 +96,7 @@ checkpoint = ModelCheckpoint(filepath, verbose=1, save_best_only=False)
 tbCallBack = keras.callbacks.TensorBoard(log_dir=logdir, write_graph=True, write_images=True)
 callbacks_list = [lr_sched, checkpoint, tbCallBack]
 
-# Addestra
+# training
 
 if __name__ == '__main__':
 
@@ -105,7 +104,7 @@ if __name__ == '__main__':
 
     # Carica i dataset
     val_dataset = '../Faces_labeled/test'
-    train_size = 2000000  # IMPORTANTE, SETTARE QUESTO VALORE!
+    train_size = 2000000  # IMPORTANT SET A VALUE!
     val_size = dataset_size(val_dataset)
     steps_per_epoch = train_size / batch_size
     validation_steps = val_size / batch_size
@@ -138,7 +137,7 @@ if __name__ == '__main__':
         #   [ 975 3861]] < True positive
         from sklearn.metrics import classification_report, confusion_matrix
 
-        # y_pred = [1]*y_true.shape[0] # Per provare, dovrebbe dare recall=1
+        # y_pred = [1]*y_true.shape[0] # To try, it should give recall = 1
         conf = confusion_matrix(y_true, y_pred, [0, 1, 2, 3])
         print(conf)
     """ nas_model_multitask.fit_generator(train_generator,

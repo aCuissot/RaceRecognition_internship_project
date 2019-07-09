@@ -43,7 +43,7 @@ shape = (1, siz, siz, 3)
 
 print("Setting up for %s." % dirnm)
 
-# Load the basic network
+# Load the original network
 # model = keras.applications.mobilenet.MobileNet(input_shape=(224,224,3))
 from VGGFace2.test_antonio.mobilenet_v2_keras import MobileNetv2, relu6
 
@@ -102,7 +102,7 @@ if __name__ == '__main__':
 
     print("Evaluation for %s is starting..." % dirnm)
 
-    # Carica i dataset
+    # Loading dataset
     val_dataset = './test1'
 
     ckpntlist = ['mobile.29-0.22.hdf5']
@@ -128,7 +128,7 @@ if __name__ == '__main__':
     #   [ 975 3861]] < True positive
     from sklearn.metrics import classification_report, confusion_matrix
 
-    # y_pred = [1]*y_true.shape[0] # Per provare, dovrebbe dare recall=1
+    # y_pred = [1]*y_true.shape[0] # To try, it should give recall = 1
     conf = confusion_matrix(y_true, y_pred, [0, 1, 2, 3])
     print(conf)
     conf_pc = [[None, None, None, None], [None, None, None, None], [None, None, None, None], [None, None, None, None]]
