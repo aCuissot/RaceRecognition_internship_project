@@ -6,6 +6,8 @@ You can tune the batch composition in `dataset_tool.py`, here we have batches re
 
 The trains are done on 2.000.000 images from VGGFace2 dataset and stoped when accuracy seem stable
 
+Weights gave by training are available in the folder `trained_networks`
+
 The matrix structure:
 
 |  | African predicted    | Asian predicted      | Latin/Caucasian predicted       |    Indian predicted  |
@@ -38,9 +40,12 @@ And this is a normalized version of this matrix:
 |  0.005 |   0.008 | 0.969 | 0.018 |
 |  0.012  |    0.012  |  0.304  | 0.672 |
 
+![alt text](data/resnet_train.png "evolution of loss and accuracy during training")
+
+
 ##### 1.2. Results for MobileNet
 
-After 16 epochs (around 36 hours on the workstation), we got `loss: 0.1684 - acc: 0.9406 - val_loss: 0.2173 - val_acc: 0.9319`.
+After 16 epochs.
 
 This is the confusion matrix computer on testSet:
 
@@ -59,3 +64,27 @@ And this is a normalized version of this matrix:
 |  0.013 |  0.842 |  0.135  |  0.010 |
 |  0.006 |   0.008 | 0.966 | 0.019 |
 |  0.006  |    0.009  |  0.266  | 0.719 |
+
+##### 1.3. Results for VGG16
+
+After 17 epochs, we got `loss: 0.1570 - acc: 0.9457 - val_loss: 0.2124 - val_acc: 0.9381`.
+
+This is the confusion matrix computer on testSet:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 7852 |  88  |  1252  |  72  |
+|  198 | 16917 |  2396  |  114 |
+|  614 |  867 | 129628 | 2399 |
+|  48  |   43  |  1831  | 4705 |
+
+And this is a normalized version of this matrix:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 0.848|   0.009  |   0.135  |  0.008  |
+|  0.010 |  0.862 |  0.122  |  0.006 |
+|  0.005 |   0.006 | 0.971 | 0.018 |
+|  0.007  |    0.007  |  0.276  | 0.710 |
+
+![alt text](data/vgg_train.png "evolution of loss and accuracy during training")
