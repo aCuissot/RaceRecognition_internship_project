@@ -96,4 +96,4 @@ BLACK = "[30m"
 BLUE = "[34m"
 RED = "[31m"
 
-grayLvlMethod("Data/aa.jpg")
+grayLvlMethod("../../aa.jpg")

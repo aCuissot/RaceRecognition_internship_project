@@ -92,11 +92,35 @@ And this is a normalized version of this matrix:
 
 ![alt text](data/vgg_train.png "evolution of loss and accuracy during training")
 
+##### 1.4. Results for VGGFace
+
+After 9 epochs
+
+This is the confusion matrix computer on testSet:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 7927 |  61  |  1146  |  130  |
+|  185 | 16914 |  2327  |  199 |
+|  767 |  930 | 128992 | 2819 |
+|  33  |   39  |  1664  | 4891 |
+
+And this is a normalized version of this matrix:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 0.856|   0.006  |   0.124  |  0.014  |
+|  0.009 |  0.862 |  0.119  |  0.010 |
+|  0.006 |   0.007 | 0.966 | 0.021 |
+|  0.005  |    0.006  |  0.251  | 0.738 |
+
+![alt text](data/vggface_train_bal.png "evolution of loss and accuracy during training")
+
 #### 2. Batches homogeneous
 
 Here we tried to use homogeneous ethnicity repartition in each batch, so each batch should contain 25% of each ethnicity.
 
-##### 2.3. Results for VGGFace
+##### 2.4. Results for VGGFace
 
 After 9 epochs
 
