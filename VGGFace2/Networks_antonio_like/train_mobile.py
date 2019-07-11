@@ -50,7 +50,7 @@ source_model = MobileNetv2((shape[1], shape[2], shape[3]), 1001, mul)
 source_model.load_weights('mobilenet_v2_0.75_96.h5')
 source_model.summary()
 original_layers = [x.name for x in source_model.layers]
-x = source_model.get_layer('reshape_1').output  # Ultimo livello della rete originale, senza dropout
+x = source_model.get_layer('reshape_1').output  # Last level of the original network, without dropout
 
 # Modifying the network
 # x = keras.layers.GlobalAveragePooling2D()(last_layer)

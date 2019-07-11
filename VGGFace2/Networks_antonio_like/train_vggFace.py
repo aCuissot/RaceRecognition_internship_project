@@ -49,7 +49,7 @@ source_model = VGGFace(include_top=False, input_shape=(shape[1], shape[2], shape
 source_model.summary()
 # source_model.load_weights('vgg16.75_96.h5')
 original_layers = [x.name for x in source_model.layers]
-x = source_model.get_layer('conv5_3').output  # Ultimo livello della rete originale, senza dropout
+x = source_model.get_layer('conv5_3').output  # Last level of the original network, without dropout
 
 # Modify network
 # x = keras.layers.GlobalAveragePooling2D()(last_layer)

@@ -49,7 +49,7 @@ source_model = VGG16(include_top=False, input_shape=(shape[1], shape[2], shape[3
 source_model.summary()
 # source_model.load_weights('vgg16.75_96.h5')
 original_layers = [x.name for x in source_model.layers]
-x = source_model.get_layer('block5_conv3').output  # Ultimo livello della rete originale, senza dropout
+x = source_model.get_layer('block5_conv3').output  # Last level of the original network, without dropout
 
 # Modify network
 # x = keras.layers.GlobalAveragePooling2D()(last_layer)
@@ -58,7 +58,7 @@ x = keras.layers.Dropout(0.5, name='dropout')(x)
 x = keras.layers.Flatten()(x)
 outS = x
 outS = Dense(NUM_CLASSES, activation="softmax", name='outS')(outS)
-vgg_model = Model(source_model.input, outS)  # Modelo solo gender
+vgg_model = Model(source_model.input, outS)
 vgg_model_multitask = vgg_model
 vgg_model_multitask.summary()
 # plot_model(nas_model_multitask, to_file=os.path.join(dirnm, 'vgg16.png'), show_shapes=True)

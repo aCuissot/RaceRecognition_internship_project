@@ -49,7 +49,7 @@ source_model = ResNet50(input_shape=(shape[1], shape[2], shape[3]), include_top=
 source_model.summary()
 # source_model.load_weights('resnet_v2_0.75_96.h5')
 original_layers = [x.name for x in source_model.layers]
-x = source_model.get_layer('res5c_branch2c').output  # Ultimo livello della rete originale, senza dropout
+x = source_model.get_layer('res5c_branch2c').output  # Last level of the original network, without dropout
 
 # Modifying the network
 # x = keras.layers.GlobalAveragePooling2D()(last_layer)

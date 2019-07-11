@@ -34,20 +34,40 @@ learning_rate_decay_epochs = 6
 weight_decay = 5e-5
 MULTIPLIER_FOR_OLD_LAYERS = 0.1
 
-siz = 331
+siz = 96
 
 dirnm = "exp-inp%d" % siz
 shape = (1, siz, siz, 3)
 
 print("Setting up for %s." % dirnm)
-0
+
 # Loading original network
 # model = keras.applications.nasnet.NASNetLarge(input_shape=(224,224,3))
 from keras.applications.nasnet import NASNetLarge
 
 # can t change shape...
 # https://github.com/keras-team/keras-applications/issues/78
-source_model = NASNetLarge(include_top=False, input_shape=(shape[1], shape[2], shape[3]), classes=4)
+# excepted if I modify keras_applications.nasnet replacing
+
+# input_shape = _obtain_input_shape(input_shape,
+#                                   default_size=default_size,
+#                                   min_size=32,
+#                                   data_format=backend.image_data_format(),
+#                                   require_flatten=False,
+#                                   weights=weights)
+
+# by:
+
+# input_shape = _obtain_input_shape(input_shape,
+#                                   default_size=default_size,
+#                                   min_size=32,
+#                                   data_format=backend.image_data_format(),
+#                                   require_flatten=include_top,
+#                                   weights=weights)
+
+# in NASNetLarge(...)
+
+source_model = NASNetLarge(input_shape=(shape[1], shape[2], shape[3]), include_top=False, weights='imagenet', classes=4)
 source_model.summary()
 # source_model.load_weights('nasnet.75_96.h5')
 original_layers = [x.name for x in source_model.layers]

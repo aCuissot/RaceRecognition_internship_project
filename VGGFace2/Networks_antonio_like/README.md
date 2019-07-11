@@ -17,7 +17,10 @@ The matrix structure:
 |Real Latin/Caucasian|    |    |   |   |
 |Real Indians|     |      |     |   |
 
-#### 1. Batches homogeneous
+#### 1. Batches respecting proportions
+
+Until we have big steps in ethnicities proportions in the dataset, we try to keep the same proportions in each batch, so here we got around 6% Africans, 8% Asians, 80% Latin/Caucasian and 6% Indians in each batch
+
 ##### 1.1. Results for ResNet
 
 After 16 epochs (around 36 hours on the workstation), we got `loss: 0.1684 - acc: 0.9406 - val_loss: 0.2173 - val_acc: 0.9319`.
@@ -86,5 +89,33 @@ And this is a normalized version of this matrix:
 |  0.010 |  0.862 |  0.122  |  0.006 |
 |  0.005 |   0.006 | 0.971 | 0.018 |
 |  0.007  |    0.007  |  0.276  | 0.710 |
+
+![alt text](data/vgg_train.png "evolution of loss and accuracy during training")
+
+#### 2. Batches homogeneous
+
+Here we tried to use homogeneous ethnicity repartition in each batch, so each batch should contain 25% of each ethnicity.
+
+##### 2.3. Results for VGGFace
+
+After 9 epochs
+
+This is the confusion matrix computer on testSet:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 8369 |  101  |  657  |  137  |
+|  301 | 18087 |  964  |  273 |
+|  1976 |  2329 | 124545 | 4658 |
+|  59  |   106  |  768  | 5694 |
+
+And this is a normalized version of this matrix:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 0.903|   0.011  |   0.071  |  0.015  |
+|  0.015 |  0.922 |  0.049  |  0.014 |
+|  0.015 |   0.017 | 0.933 | 0.035 |
+|  0.009  |    0.16  |  0.116  | 0.859 |
 
 ![alt text](data/vgg_train.png "evolution of loss and accuracy during training")
