@@ -116,6 +116,6 @@ And this is a normalized version of this matrix:
 | 0.903|   0.011  |   0.071  |  0.015  |
 |  0.015 |  0.922 |  0.049  |  0.014 |
 |  0.015 |   0.017 | 0.933 | 0.035 |
-|  0.009  |    0.16  |  0.116  | 0.859 |
+|  0.009  |    0.016  |  0.116  | 0.859 |
 
-![alt text](data/vgg_train.png "evolution of loss and accuracy during training")
+![alt text](data/vggface_train_bal.png "evolution of loss and accuracy during training")

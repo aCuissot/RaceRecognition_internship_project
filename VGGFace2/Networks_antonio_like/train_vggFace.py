@@ -28,7 +28,7 @@ batch_size = 4
 epochs = 20
 
 # learning rate schedule
-initial_learning_rate = 0.005
+initial_learning_rate = 0.0005
 learning_rate_decay_factor = 0.5
 learning_rate_decay_epochs = 6
 weight_decay = 5e-5
