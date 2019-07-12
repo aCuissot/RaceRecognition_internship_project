@@ -25,6 +25,8 @@ Until we have big steps in ethnicities proportions in the dataset, we try to kee
 
 After 16 epochs (around 36 hours on the workstation), we got `loss: 0.1684 - acc: 0.9406 - val_loss: 0.2173 - val_acc: 0.9319`.
 
+learning rate = 0.005
+
 This is the confusion matrix computer on testSet:
 
 |      |       |        |      |
@@ -50,6 +52,8 @@ And this is a normalized version of this matrix:
 
 After 16 epochs.
 
+learning rate = 0.005
+
 This is the confusion matrix computer on testSet:
 
 |      |       |        |      |
@@ -71,6 +75,8 @@ And this is a normalized version of this matrix:
 ##### 1.3. Results for VGG16
 
 After 17 epochs, we got `loss: 0.1570 - acc: 0.9457 - val_loss: 0.2124 - val_acc: 0.9381`.
+
+learning rate = 0.005
 
 This is the confusion matrix computer on testSet:
 
@@ -96,6 +102,8 @@ And this is a normalized version of this matrix:
 
 After 9 epochs
 
+learning rate = 0.0005
+
 This is the confusion matrix computer on testSet:
 
 |      |       |        |      |
@@ -114,7 +122,7 @@ And this is a normalized version of this matrix:
 |  0.006 |   0.007 | 0.966 | 0.021 |
 |  0.005  |    0.006  |  0.251  | 0.738 |
 
-![alt text](data/vggface_train_bal.png "evolution of loss and accuracy during training")
+![alt text](data/vggface_train.png "evolution of loss and accuracy during training")
 
 #### 2. Batches homogeneous
 
@@ -123,6 +131,8 @@ Here we tried to use homogeneous ethnicity repartition in each batch, so each ba
 ##### 2.4. Results for VGGFace
 
 After 9 epochs
+
+learning rate = 0.0005
 
 This is the confusion matrix computer on testSet:
 

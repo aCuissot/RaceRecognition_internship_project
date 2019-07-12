@@ -84,67 +84,20 @@ def findRelevantFace(objs, W, H):
     return minobj
 
 
-TIME_LOADING = 0
-TIME_DETECTING = 0
-TIME_CROPPING = 0
-faces_found = 0
-images_processed = 0
-
-import sys
-import os
-from time import time
-
-fin_name = sys.argv[1]
-img_path = os.path.join(os.path.dirname(fin_name), os.path.basename(fin_name)[:-4])
-fout_name = os.path.basename(fin_name)[:-4] + '.detected.txt'
-fin = open(fin_name, "r")
-fout = open(fout_name, "w")
-for line in tqdm(fin):
-    if images_processed >= 2000:
-        break
-    TSTART = time()
-    line = line.strip()
-    line = line.split(',')
-    img_fname = os.path.join(img_path, line[2])
-    frame = cv2.imread(img_fname)
-    TIME_LOADING += time() - TSTART
+def preprocessing_face_without_alignement(img_path):
+    frame = cv2.imread(img_path)
     ##########
-    TSTART = time()
     faces = fd.detect(frame)
-    images_processed += 1
     if len(faces) == 0:
-        continue
-    faces_found += 1
+        print("no face detected")
+        return frame, False
     # for f in faces:
     #    cv2.rectangle(frame, top_left(f), bottom_right(f), (0, 255, 0), 2)
     f = findRelevantFace(faces, frame.shape[1], frame.shape[0])
-    TIME_DETECTING += time() - TSTART
     # cv2.rectangle(frame, top_left(f), bottom_right(f), (255, 255, 0), 2)
     # cv2.imshow('img', frame)
     # cv2.waitKey(0)
-    TSTART = time()
     f['roi'] = enclosing_square(f['roi'])
     f['roi'] = add_margin(f['roi'], 0.2)
     img = cut(frame, f['roi'])
-    TIME_CROPPING += time() - TSTART
-    # cv2.imshow('img',f['img'])
-    # cv2.waitKey(0)
-    # cv2.imshow('img',img)
-    # cv2.waitKey(0)
-
-    #    landmarks = al.get_landmarks(frame, f['roi'])
-    #    for l in landmarks:
-    #        cv2.circle(frame, l, 2, (0,255,0), -1)
-
-    # Display the resulting frame
-    # cv2.imshow('frame',frame)
-    # cv2.imshow('img',img)
-    # if cv2.waitKey(100) & 0xFF == ord('q'):
-    #    break
-
-cv2.destroyAllWindows()
-
-print("Time loading: %f" % TIME_LOADING)
-print("Time detecting: %f" % TIME_DETECTING)
-print("Time cropping: %f" % TIME_CROPPING)
-print("Faces found: %d/%d" % (faces_found, images_processed))
+    return img, True

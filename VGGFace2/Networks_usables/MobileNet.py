@@ -38,7 +38,7 @@ predictions = Dense(nb_classes, activation="softmax")(x)
 model_final = Model(input=model.input, output=predictions)
 
 # compile the model
-model_final.compile(loss="categorical_crossentropy", optimizer=optimizers.SGD(lr=0.0001, momentum=0.9),
+model_final.compile(loss="categorical_crossentropy", optimizer=optimizers.SGD(lr=0.1, momentum=0.9),
                     metrics=["accuracy"])
 
 # Initiate the train and test generators with data Augumentation

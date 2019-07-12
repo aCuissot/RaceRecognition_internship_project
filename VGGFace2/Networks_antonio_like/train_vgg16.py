@@ -70,7 +70,7 @@ for layer in vgg_model_multitask.layers:
 learning_rate_multipliers = {}
 for layer_name in original_layers:
     learning_rate_multipliers[layer_name] = MULTIPLIER_FOR_OLD_LAYERS
-# I livelli aggiunti avranno lr multiplier = 1
+# added levels will have lr_multiplier = 1
 new_layers = [x.name for x in source_model.layers if x.name not in original_layers]
 for layer_name in new_layers:
     learning_rate_multipliers[layer_name] = 1

@@ -3,12 +3,21 @@
 import sys
 import os
 from glob import glob
+
+import cv2
 import numpy as np
 import sklearn
 
 import tensorflow as tf
 import keras
 from keras.preprocessing import image
+from keras.engine import Model
+from keras.layers import Flatten, Dense, Dropout, Input, Reshape, Convolution2D, MaxPooling2D
+from keras.utils.vis_utils import plot_model
+from keras import backend as K
+
+from VGGFace2.Networks_antonio_like.dataset_tools import load_for_training, load_for_test, dataset_size, NUM_CLASSES
+import VGGFace2.Networks_antonio_like.faceDetectionPart.preprocessing as prepr
 
 print(keras.__version__)
 
@@ -17,20 +26,43 @@ config.gpu_options.allow_growth = True
 session = tf.Session(config=config)
 keras.backend.set_session(session)
 
-from keras.engine import Model
-from keras.layers import Flatten, Dense, Dropout, Input, Reshape, Convolution2D, MaxPooling2D
-from keras.callbacks import ModelCheckpoint
-from keras.callbacks import EarlyStopping
-from keras.utils.vis_utils import plot_model
-from keras import backend as K
+img_path = './testUrImg/mariolle.png'
+network = "vgg16"
+# checkpoint have to be in 'trained_networks' directory
+checkpoint_loaded = 'vgg16.17-0.21.hdf5'
 
-from VGGFace2.Networks_antonio_like.dataset_tools import load_for_training, load_for_test, dataset_size, NUM_CLASSES
+num_class=  4
+siz = 0
+if network == "resnet" or network == "vgg16" or network == "vggface" or network == "mobilenet":
+    siz = 96
+elif network == "nasnet":
+    siz = 331
+else:
+    print("unknown network, please choose one in ['resnet', 'mobilenet', 'vgg16', 'vggface', 'nasnet']")
 
-img_path = './testUrImg/jaaj.png'
+shape = (1, siz, siz, 3)
 
-batch_size = 64
-epochs = 64
 
+def decode_pred(pred):
+    pred = pred[0]
+    argmax = 0
+    max = 0
+    for i in range(num_class):
+        if pred[i]>max:
+            max = pred[i]
+            argmax = i
+    if argmax == 0:
+        return ("African: " + str(100 * max) + "%")
+    elif argmax == 1:
+        return("Asian: " + str(100 * max) + "%")
+    elif argmax == 2:
+        return("Caucasian/Latin: " + str(100 * max) + "%")
+    else:
+        return("Indian: " + str(100 * max) + "%")
+
+
+img_preprocessed, is_preprocessed = prepr.preprocessing_face_without_alignement(img_path)
+img_preprocessed = cv2.resize(img_preprocessed, shape[1:3])
 # learning rate schedule
 initial_learning_rate = 0.005
 learning_rate_decay_factor = 0.5
@@ -38,83 +70,103 @@ learning_rate_decay_epochs = 6
 weight_decay = 5e-5
 MULTIPLIER_FOR_OLD_LAYERS = 0.1
 
-siz = 96
-
 dirnm = "trained_networks"
-shape = (1, siz, siz, 3)
 
 print("Setting up for %s." % dirnm)
 
 # Load the basic network
-# model = keras.applications.mobilenet.MobileNet(input_shape=(224,224,3))
-from keras.applications.resnet50 import ResNet50, preprocess_input
+if network == 'resnet':
+    import keras.applications.resnet50 as resnet50
 
-source_model = ResNet50(input_shape=(shape[1], shape[2], shape[3]), include_top=False, classes=4)
-original_layers = [x.name for x in source_model.layers]
-x = source_model.get_layer('res5c_branch2c').output  # last level of the original network without dropout
+    source_model = resnet50.ResNet50(input_shape=(shape[1], shape[2], shape[3]), include_top=False, classes=4)
+    original_layers = [x.name for x in source_model.layers]
+    x = source_model.get_layer('res5c_branch2c').output  # last level of the original network without dropout
 
-# Modify the network
-# x = keras.layers.GlobalAveragePooling2D()(last_layer)
-# x = keras.layers.Reshape((1, 1, 1024), name='reshape_1')(x)
-x = keras.layers.Dropout(0.5, name='dropout')(x)
-x = keras.layers.Flatten()(x)
-outS = x
-outS = Dense(NUM_CLASSES, activation="softmax", name='outS')(outS)
-res_model = Model(source_model.input, outS)
-res_model_multitask = res_model
-res_model_multitask.summary()
-# plot_model(vgg_model_multitask, to_file=os.path.join(dirnm, 'ResNet50.png'), show_shapes=True)
+    # Modify the network
+    # x = keras.layers.GlobalAveragePooling2D()(last_layer)
+    # x = keras.layers.Reshape((1, 1, 1024), name='reshape_1')(x)
+    x = keras.layers.Dropout(0.5, name='dropout')(x)
+    x = keras.layers.Flatten()(x)
+    outS = x
+    outS = Dense(NUM_CLASSES, activation="softmax", name='outS')(outS)
+    model = Model(source_model.input, outS)
+    model_multitask = model
 
+    # based on the learning rate multipliers
+    for layer in model_multitask.layers:
+        layer.trainable = True
+    learning_rate_multipliers = {}
+    for layer_name in original_layers:
+        learning_rate_multipliers[layer_name] = MULTIPLIER_FOR_OLD_LAYERS
+    # added levels will have lr_multiplier = 1
+    new_layers = [x.name for x in source_model.layers if x.name not in original_layers]
+    for layer_name in new_layers:
+        learning_rate_multipliers[layer_name] = 1
 
-# based on the learning rate multipliers
-for layer in res_model_multitask.layers:
-    layer.trainable = True
-learning_rate_multipliers = {}
-for layer_name in original_layers:
-    learning_rate_multipliers[layer_name] = MULTIPLIER_FOR_OLD_LAYERS
-# added levels will have lr_multiplier = 1
-new_layers = [x.name for x in source_model.layers if x.name not in original_layers]
-for layer_name in new_layers:
-    learning_rate_multipliers[layer_name] = 1
+    # Prepare optimization with the lr_decay
+    from VGGFace2.Networks_antonio_like.training_tools import Adam_lr_mult
 
-# Prepare optimization with the lr_decay
-from VGGFace2.Networks_antonio_like.training_tools import Adam_lr_mult
-from VGGFace2.Networks_antonio_like.training_tools import step_decay_schedule
-
-adam_with_lr_multipliers = Adam_lr_mult(lr=initial_learning_rate, decay=weight_decay,
-                                        multipliers=learning_rate_multipliers)
-res_model_multitask.compile(adam_with_lr_multipliers,
+    adam_with_lr_multipliers = Adam_lr_mult(lr=initial_learning_rate, decay=weight_decay,
+                                            multipliers=learning_rate_multipliers)
+    model_multitask.compile(adam_with_lr_multipliers,
                             loss=['categorical_crossentropy'], metrics=['accuracy'])
 
-# Preparing callback
-if not os.path.isdir(dirnm):
-    os.mkdir(dirnm)
-filepath = os.path.join(dirnm, "resnet.{epoch:02d}-{val_loss:.2f}.hdf5")
-logdir = os.path.join(dirnm, 'tb_logs')
-lr_sched = step_decay_schedule(initial_lr=initial_learning_rate, decay_factor=learning_rate_decay_factor,
-                               step_size=learning_rate_decay_epochs)
-checkpoint = ModelCheckpoint(filepath, verbose=1, save_best_only=False)
-tbCallBack = keras.callbacks.TensorBoard(log_dir=logdir, write_graph=True, write_images=True)
-callbacks_list = [lr_sched, checkpoint, tbCallBack]
+    # Evaluate
+    if is_preprocessed:
+        print("Evaluation for %s is starting..." % dirnm)
 
-# Evaluate
+        model_multitask.load_weights(dirnm + '/' + checkpoint_loaded)
 
-if __name__ == '__main__':
+        x = image.img_to_array(img_preprocessed)
+        x = np.expand_dims(x, axis=0)
+        x = resnet50.preprocess_input(x)
+        pred = model_multitask.predict(x)
+        print(pred)
 
-    print("Evaluation for %s is starting..." % dirnm)
+if network == 'vgg16':
+    import keras.applications.vgg16 as vgg16
 
-    ckpntlist = ['resnet.16-0.22.hdf5']
-    # ckpntlist = [sys.argv[1]]
-    res_model_multitask.load_weights(dirnm + '/' + ckpntlist[0])
+    source_model = vgg16.VGG16(input_shape=(shape[1], shape[2], shape[3]), include_top=False, classes=4)
+    original_layers = [x.name for x in source_model.layers]
+    x = source_model.get_layer('block5_conv3').output  # last level of the original network without dropout
 
-    """ data, Y_true = load_for_pred(val_dataset, batch_size, shape)
-    print(Y_true.shape)
-    Y_pred = vgg_model_multitask.predict(data, batch_size, verbose=1) """
-    img = image.load_img(img_path, target_size=(96, 96))
-    x = image.img_to_array(img)
-    x = np.expand_dims(x, axis=0)
-    x = preprocess_input(x)
-    # pred = res_model_multitask.predict(x)
-    pred = keras.utils.to_categorical(Y_true, num_classes=NUM_CLASSES)
-    print(pred)
+    # Modify the network
+    # x = keras.layers.GlobalAveragePooling2D()(last_layer)
+    # x = keras.layers.Reshape((1, 1, 1024), name='reshape_1')(x)
+    x = keras.layers.Dropout(0.5, name='dropout')(x)
+    x = keras.layers.Flatten()(x)
+    outS = x
+    outS = Dense(NUM_CLASSES, activation="softmax", name='outS')(outS)
+    model = Model(source_model.input, outS)
+    model_multitask = model
 
+    # based on the learning rate multipliers
+    for layer in model_multitask.layers:
+        layer.trainable = True
+    learning_rate_multipliers = {}
+    for layer_name in original_layers:
+        learning_rate_multipliers[layer_name] = MULTIPLIER_FOR_OLD_LAYERS
+    # added levels will have lr_multiplier = 1
+    new_layers = [x.name for x in source_model.layers if x.name not in original_layers]
+    for layer_name in new_layers:
+        learning_rate_multipliers[layer_name] = 1
+
+    # Prepare optimization with the lr_decay
+    from VGGFace2.Networks_antonio_like.training_tools import Adam_lr_mult
+
+    adam_with_lr_multipliers = Adam_lr_mult(lr=initial_learning_rate, decay=weight_decay,
+                                            multipliers=learning_rate_multipliers)
+    model_multitask.compile(adam_with_lr_multipliers,
+                            loss=['categorical_crossentropy'], metrics=['accuracy'])
+
+    # Evaluate
+    if is_preprocessed:
+        print("Evaluation for %s is starting..." % dirnm)
+
+        model_multitask.load_weights(dirnm + '/' + checkpoint_loaded)
+
+        x = image.img_to_array(img_preprocessed)
+        x = np.expand_dims(x, axis=0)
+        x = vgg16.preprocess_input(x)
+        pred = model_multitask.predict(x)
+        print(decode_pred(pred))
