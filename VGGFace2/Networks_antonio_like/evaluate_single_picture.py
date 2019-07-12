@@ -26,12 +26,12 @@ config.gpu_options.allow_growth = True
 session = tf.Session(config=config)
 keras.backend.set_session(session)
 
-img_path = './testUrImg/mariolle.png'
-network = "vgg16"
+img_path = './testUrImg/bernardo.jpg'
+network = "vggface"
 # checkpoint have to be in 'trained_networks' directory
-checkpoint_loaded = 'vgg16.17-0.21.hdf5'
+checkpoint_loaded = 'vggFace.09-0.23.hdf5'
 
-num_class=  4
+num_class = 4
 siz = 0
 if network == "resnet" or network == "vgg16" or network == "vggface" or network == "mobilenet":
     siz = 96
@@ -48,17 +48,17 @@ def decode_pred(pred):
     argmax = 0
     max = 0
     for i in range(num_class):
-        if pred[i]>max:
+        if pred[i] > max:
             max = pred[i]
             argmax = i
     if argmax == 0:
-        return ("African: " + str(100 * max) + "%")
+        return "African: " + str(100 * max) + "%"
     elif argmax == 1:
-        return("Asian: " + str(100 * max) + "%")
+        return "Asian: " + str(100 * max) + "%"
     elif argmax == 2:
-        return("Caucasian/Latin: " + str(100 * max) + "%")
+        return "Caucasian/Latin: " + str(100 * max) + "%"
     else:
-        return("Indian: " + str(100 * max) + "%")
+        return "Indian: " + str(100 * max) + "%"
 
 
 img_preprocessed, is_preprocessed = prepr.preprocessing_face_without_alignement(img_path)
@@ -168,5 +168,101 @@ if network == 'vgg16':
         x = image.img_to_array(img_preprocessed)
         x = np.expand_dims(x, axis=0)
         x = vgg16.preprocess_input(x)
+        pred = model_multitask.predict(x)
+        print(decode_pred(pred))
+
+if network == 'vggface':
+    from VGGFace2.Networks_antonio_like.vggFace import VGGFace
+    import VGGFace2.Networks_antonio_like.vggFace_utils as vggFacePrepro
+    source_model = VGGFace(input_shape=(shape[1], shape[2], shape[3]), include_top=False, classes=4)
+    original_layers = [x.name for x in source_model.layers]
+    x = source_model.get_layer('conv5_3').output  # last level of the original network without dropout
+
+    # Modify the network
+    # x = keras.layers.GlobalAveragePooling2D()(last_layer)
+    # x = keras.layers.Reshape((1, 1, 1024), name='reshape_1')(x)
+    x = keras.layers.Dropout(0.5, name='dropout')(x)
+    x = keras.layers.Flatten()(x)
+    outS = x
+    outS = Dense(NUM_CLASSES, activation="softmax", name='outS')(outS)
+    model = Model(source_model.input, outS)
+    model_multitask = model
+
+    # based on the learning rate multipliers
+    for layer in model_multitask.layers:
+        layer.trainable = True
+    learning_rate_multipliers = {}
+    for layer_name in original_layers:
+        learning_rate_multipliers[layer_name] = MULTIPLIER_FOR_OLD_LAYERS
+    # added levels will have lr_multiplier = 1
+    new_layers = [x.name for x in source_model.layers if x.name not in original_layers]
+    for layer_name in new_layers:
+        learning_rate_multipliers[layer_name] = 1
+
+    # Prepare optimization with the lr_decay
+    from VGGFace2.Networks_antonio_like.training_tools import Adam_lr_mult
+
+    adam_with_lr_multipliers = Adam_lr_mult(lr=initial_learning_rate, decay=weight_decay,
+                                            multipliers=learning_rate_multipliers)
+    model_multitask.compile(adam_with_lr_multipliers,
+                            loss=['categorical_crossentropy'], metrics=['accuracy'])
+
+    # Evaluate
+    if is_preprocessed:
+        print("Evaluation for %s is starting..." % dirnm)
+
+        model_multitask.load_weights(dirnm + '/' + checkpoint_loaded)
+
+        x = image.img_to_array(img_preprocessed)
+        x = np.expand_dims(x, axis=0)
+        x = vggFacePrepro.preprocess_input(x)
+        pred = model_multitask.predict(x)
+        print(decode_pred(pred))
+
+if network == 'mobilenet':
+    from VGGFace2.Networks_antonio_like.mobilenet_v2_keras import MobileNetv2
+    import keras.applications.mobilenet as mobilenet
+    source_model = MobileNetv2(input_shape=(shape[1], shape[2], shape[3]), include_top=False, classes=4)
+    original_layers = [x.name for x in source_model.layers]
+    x = source_model.get_layer('reshape_1').output  # last level of the original network without dropout
+
+    # Modify the network
+    # x = keras.layers.GlobalAveragePooling2D()(last_layer)
+    # x = keras.layers.Reshape((1, 1, 1024), name='reshape_1')(x)
+    x = keras.layers.Dropout(0.5, name='dropout')(x)
+    x = keras.layers.Flatten()(x)
+    outS = x
+    outS = Dense(NUM_CLASSES, activation="softmax", name='outS')(outS)
+    model = Model(source_model.input, outS)
+    model_multitask = model
+
+    # based on the learning rate multipliers
+    for layer in model_multitask.layers:
+        layer.trainable = True
+    learning_rate_multipliers = {}
+    for layer_name in original_layers:
+        learning_rate_multipliers[layer_name] = MULTIPLIER_FOR_OLD_LAYERS
+    # added levels will have lr_multiplier = 1
+    new_layers = [x.name for x in source_model.layers if x.name not in original_layers]
+    for layer_name in new_layers:
+        learning_rate_multipliers[layer_name] = 1
+
+    # Prepare optimization with the lr_decay
+    from VGGFace2.Networks_antonio_like.training_tools import Adam_lr_mult
+
+    adam_with_lr_multipliers = Adam_lr_mult(lr=initial_learning_rate, decay=weight_decay,
+                                            multipliers=learning_rate_multipliers)
+    model_multitask.compile(adam_with_lr_multipliers,
+                            loss=['categorical_crossentropy'], metrics=['accuracy'])
+
+    # Evaluate
+    if is_preprocessed:
+        print("Evaluation for %s is starting..." % dirnm)
+
+        model_multitask.load_weights(dirnm + '/' + checkpoint_loaded)
+
+        x = image.img_to_array(img_preprocessed)
+        x = np.expand_dims(x, axis=0)
+        x = mobilenet.preprocess_input(x)
         pred = model_multitask.predict(x)
         print(decode_pred(pred))
