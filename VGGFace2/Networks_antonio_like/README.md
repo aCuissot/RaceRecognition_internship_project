@@ -204,3 +204,80 @@ And this is a normalized version of this matrix:
 |  0.009  |    0.016  |  0.116  | 0.859 |
 
 ![alt text](data/vggface_train_bal.png "evolution of loss and accuracy during training")
+
+#### 3. Best loss
+
+We tried to evaluate the networks for the epoch with the smallest loss on validation set to see the differences (the training is the same)
+
+##### 3.1. Results for Resnet
+
+We used here the epoch 12
+
+This is the confusion matrix computer on testSet:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 7841 |  121  |  1197  |  105  |
+|  329 | 16125 |  3018  |  153 |
+|  710 |  1129 | 129307 | 2362 |
+|  77  |   73  |  1985  | 4492 |
+
+And this is a normalized version of this matrix:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 0.847 |   0.013  |   0.129  |  0.011  |
+|  0.017 |  0.822 |  0.153  |  0.008 |
+|  0.005 |   0.008 | 0.969 | 0.018 |
+|  0.012  |    0.011  |  0.299  | 0.698 |
+
+##### 3.3. Results for VGG16
+
+After 6 epochs
+
+learning rate = 0.005
+
+This is the confusion matrix computer on testSet:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 8049 |  106  |  1031  |  78  |
+|  300 | 16922 |  2319  |  84 |
+|  932 |  1059 | 129273 | 2244 |
+|  117  |   69  |  1796  | 4645 |
+
+And this is a normalized version of this matrix:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 0.869|   0.011  |   0.111  |  0.009  |
+|  0.016 |  0.862 |  0.118  |  0.004 |
+|  0.007 |   0.008 | 0.968 | 0.017 |
+|  0.018  |    0.011  |  0.271  | 0.700 |
+
+
+
+##### 3.4. Results for VGGFace
+
+After 2 epochs
+
+learning rate = 0.0005
+
+This is the confusion matrix computer on testSet:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 8074 |  40  |  1058  |  92  |
+|  357 | 16798 |  2290  |  180 |
+|  1043 |  1072 | 128465 | 2928 |
+|  124  |   96  |  1448  | 4959 |
+
+And this is a normalized version of this matrix:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 0.872|   0.004  |   0.114  |  0.010  |
+|  0.018 |  0.856 |  0.117  |  0.009 |
+|  0.008 |   0.008 | 0.962 | 0.022 |
+|  0.019  |    0.014  |  0.219  | 0.748 |
+
