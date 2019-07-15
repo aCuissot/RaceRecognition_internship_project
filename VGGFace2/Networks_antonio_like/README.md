@@ -128,7 +128,7 @@ And this is a normalized version of this matrix:
 
 Here we tried to use homogeneous ethnicity repartition in each batch, so each batch should contain 25% of each ethnicity.
 
-##### 2.4. Results for Resnet
+##### 2.1. Results for Resnet
 
 After 9 epochs
 
@@ -151,6 +151,33 @@ And this is a normalized version of this matrix:
 |  0.016 |  0.916 |  0.052  |  0.016 |
 |  0.018 |   0.018 | 0.926 | 0.038 |
 |  0.013  |    0.021  |  0.124  | 0.843 |
+
+##### 2.3. Results for VGG16
+
+After 9 epochs
+
+learning rate = 0.0005
+
+This is the confusion matrix computer on testSet:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 8373 |  127  |  610  |  154  |
+|  183 | 18343 |  825  |  274 |
+|  1586 |  2485 | 124507 | 4930 |
+|  41  |   151  |  614  | 5821 |
+
+And this is a normalized version of this matrix:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 0.904|   0.014  |   0.066  |  0.016  |
+|  0.009 |  0.935 |  0.042  |  0.014 |
+|  0.012 |   0.019 | 0.932 | 0.037 |
+|  0.006  |    0.023  |  0.093  | 0.878 |
+
+![alt text](data/vgg16_train_bal.png "evolution of loss and accuracy during training")
+
 
 ##### 2.4. Results for VGGFace
 
