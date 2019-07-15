@@ -152,6 +152,8 @@ And this is a normalized version of this matrix:
 |  0.018 |   0.018 | 0.926 | 0.038 |
 |  0.013  |    0.021  |  0.124  | 0.843 |
 
+![alt text](data/resnet_train_bal.png "evolution of loss and accuracy during training")
+
 ##### 2.3. Results for VGG16
 
 After 9 epochs
