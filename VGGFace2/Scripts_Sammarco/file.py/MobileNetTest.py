@@ -404,13 +404,13 @@ print("%s: %.2f%%" % (mobile_model.metrics_names[1], scores[1] * 100))
 test_size = 14755
 test = data_generator_prepr_crop('lfw_cropped.csv', 1)
 score = mobile_model.evaluate_generator(test, steps=test_size, use_multiprocessing=True, verbose=1)
-print("LFW acc: ")
+print("LFW jaaj: ")
 print("%s: %.2f%%" % (mobile_model.metrics_names[1], score[1] * 100))
 print("\n\n")
 
 test_size = 760
 test = data_generator_prepr_crop('feret_cropped_enr.csv', 1)
 score = mobile_model.evaluate_generator(test, steps=test_size, use_multiprocessing=True, verbose=1)
-print("FERET acc: ")
+print("FERET jaaj: ")
 print("%s: %.2f%%" % (mobile_model.metrics_names[1], score[1] * 100))
 print("\n\n")

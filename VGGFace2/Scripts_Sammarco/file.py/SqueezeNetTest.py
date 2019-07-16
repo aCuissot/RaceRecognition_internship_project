@@ -192,27 +192,27 @@ squeeze_model.load_weights("C:/Users/Enrico/Desktop/tirocinio/ALL/pesi/squeezede
 test_size = 14755
 test = data_generator_prepr_crop('C:/Users/Enrico/Desktop/tirocinio/ALL/TestDataset/lfw_cropped.csv', 1)
 score = squeeze_model.evaluate_generator(test, steps=test_size, verbose=1)
-print("LFW acc: ")
+print("LFW jaaj: ")
 print("%s: %.2f%%" % (squeeze_model.metrics_names[1], score[1] * 100))
 print("\n\n")
 
 test_size = 760
 test = data_generator_prepr_crop('C:/Users/Enrico/Desktop/tirocinio/ALL/TestDataset/feret_cropped_enr.csv', 1)
 score = squeeze_model.evaluate_generator(test, steps=test_size, use_multiprocessing=True, verbose=1)
-print("FERET acc: ")
+print("FERET jaaj: ")
 print("%s: %.2f%%" % (squeeze_model.metrics_names[1], score[1] * 100))
 print("\n\n")
 
 test_size = 404
 test = data_generator_prepr_no_crop('C:/Users/Enrico/Desktop/tirocinio/ALL/TestDataset/unisa.csv', 1)
 score = squeeze_model.evaluate_generator(test, steps=test_size, use_multiprocessing=True, verbose=1)
-print("UNISA acc: ")
+print("UNISA jaaj: ")
 print("%s: %.2f%%" % (squeeze_model.metrics_names[1], score[1] * 100))
 print("\n\n")
 
 test_size = 5402
 test = data_generator_prepr_no_crop('C:/Users/Enrico/Desktop/tirocinio/ALL/TestDataset/unisa_private.csv', 1)
 score = squeeze_model.evaluate_generator(test, steps=test_size, use_multiprocessing=True, verbose=1)
-print("UNISA acc: ")
+print("UNISA jaaj: ")
 print("%s: %.2f%%" % (squeeze_model.metrics_names[1], score[1] * 100))
 print("\n\n")

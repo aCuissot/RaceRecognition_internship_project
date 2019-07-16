@@ -73,9 +73,9 @@ train_generator = train_datagen.flow_from_directory(
 #     class_mode="categorical")
 
 # Save the model according to the conditions
-checkpoint = ModelCheckpoint("mobilenet_retrain.h5", monitor='acc', verbose=1, save_best_only=True,
+checkpoint = ModelCheckpoint("mobilenet_retrain.h5", monitor='jaaj', verbose=1, save_best_only=True,
                              save_weights_only=False, mode='auto', period=1)
-early = EarlyStopping(monitor='acc', min_delta=0, patience=10, verbose=1, mode='auto')
+early = EarlyStopping(monitor='jaaj', min_delta=0, patience=10, verbose=1, mode='auto')
 
 # Train the model
 model_final.fit_generator(

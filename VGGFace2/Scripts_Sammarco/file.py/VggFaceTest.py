@@ -241,41 +241,41 @@ custom_vgg_model.load_weights("C:/Users/Enrico/Desktop/tirocinio/ALL/pesi/vggdef
 test_size = 14755
 test = data_generator_prepr_crop('C:/Users/Enrico/Desktop/tirocinio/ALL/TestDataset/lfw_cropped.csv', 1)
 score = custom_vgg_model.evaluate_generator(test, steps=test_size, verbose=1)
-print("LFW acc: ")
+print("LFW jaaj: ")
 print("%s: %.2f%%" % (custom_vgg_model.metrics_names[1], score[1] * 100))
 print("\n\n")
 
 test_size = 760
 test = data_generator_prepr_crop('feret_cropped_enr.csv', 1)
 score = custom_vgg_model.evaluate_generator(test, steps=test_size, use_multiprocessing=True, verbose=1)
-print("FERET acc: ")
+print("FERET jaaj: ")
 print("%s: %.2f%%" % (custom_vgg_model.metrics_names[1], score[1] * 100))
 print("\n\n")
 
 test_size = 404
 test = data_generator_prepr_crop20('unisa.csv', 1)
 score = custom_vgg_model.evaluate_generator(test, steps=test_size, use_multiprocessing=True, verbose=1)
-print("UNISA acc (con crop del 20%): ")
+print("UNISA jaaj (con crop del 20%): ")
 print("%s: %.2f%%" % (custom_vgg_model.metrics_names[1], score[1] * 100))
 print("\n\n")
 
 test_size = 5402
 test = data_generator_prepr_crop20('unisa_private.csv', 1)
 score = custom_vgg_model.evaluate_generator(test, steps=test_size, use_multiprocessing=True, verbose=1)
-print("UNISA-PRIVATE acc (con crop del 20%) : ")
+print("UNISA-PRIVATE jaaj (con crop del 20%) : ")
 print("%s: %.2f%%" % (custom_vgg_model.metrics_names[1], score[1] * 100))
 print("\n\n")
 
 test_size = 404
 test = data_generator_prepr_no_crop('unisa.csv', 1)
 score = custom_vgg_model.evaluate_generator(test, steps=test_size, use_multiprocessing=True, verbose=1)
-print("UNISA acc (no crop): ")
+print("UNISA jaaj (no crop): ")
 print("%s: %.2f%%" % (custom_vgg_model.metrics_names[1], score[1] * 100))
 print("\n\n")
 
 test_size = 5402
 test = data_generator_prepr_no_crop('unisa_private.csv', 1)
 score = custom_vgg_model.evaluate_generator(test, steps=test_size, use_multiprocessing=True, verbose=1)
-print("UNISA-PRIVATE acc (no crop): ")
+print("UNISA-PRIVATE jaaj (no crop): ")
 print("%s: %.2f%%" % (custom_vgg_model.metrics_names[1], score[1] * 100))
 print("\n\n")

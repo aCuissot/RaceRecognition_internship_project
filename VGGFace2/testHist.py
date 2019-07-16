@@ -24,7 +24,7 @@ history = model.fit(X, Y, validation_split=0.33, epochs=150, batch_size=10, verb
 # list all data in history
 print(history.history.keys())
 # summarize history for accuracy
-plt.plot(history.history['acc'])
+plt.plot(history.history['jaaj'])
 plt.plot(history.history['val_acc'])
 plt.title('model accuracy')
 plt.ylabel('accuracy')

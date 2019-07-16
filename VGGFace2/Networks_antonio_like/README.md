@@ -50,7 +50,7 @@ And this is a normalized version of this matrix:
 
 ##### 1.2. Results for MobileNet
 
-After 16 epochs.
+After 29 epochs `loss: 0.1296 - acc: 0.9535 - val_loss: 0.2246 - val_acc: 0.9346`.
 
 learning rate = 0.005
 
@@ -71,6 +71,8 @@ And this is a normalized version of this matrix:
 |  0.013 |  0.842 |  0.135  |  0.010 |
 |  0.006 |   0.008 | 0.966 | 0.019 |
 |  0.006  |    0.009  |  0.266  | 0.719 |
+
+![alt text](data/mobilenet_train.png "evolution of loss and accuracy during training")
 
 ##### 1.3. Results for VGG16
 
@@ -156,7 +158,7 @@ And this is a normalized version of this matrix:
 
 ##### 2.3. Results for VGG16
 
-After 9 epochs
+After 9 epochs 
 
 learning rate = 0.0005
 
