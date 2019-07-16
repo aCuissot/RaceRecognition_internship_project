@@ -219,7 +219,7 @@ As it was expected, on balanced batches, results are more balanced (not latin/ca
 
 We tried to evaluate the networks for the epoch with the smallest loss on validation set to see the differences (the training is the same)
 
-##### 3.1. Results for Resnet
+##### 3.1. Results for ResNet
 
 We used here the epoch 12
 
@@ -240,6 +240,52 @@ And this is a normalized version of this matrix:
 |  0.017 |  0.822 |  0.153  |  0.008 |
 |  0.005 |   0.008 | 0.969 | 0.018 |
 |  0.012  |    0.011  |  0.299  | 0.698 |
+
+##### 3.1. Results for MobileNet
+
+We used here the epoch 8
+
+learning rate = 0.005
+
+This is the confusion matrix computer on testSet:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 7902 |  55  |  1169  |  138  |
+|  287 | 16310 |  2803  |  225 |
+|  848 |  1084 | 129045 | 2531 |
+|  40  |   60  |  1821  | 4706 |
+
+And this is a normalized version of this matrix:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 0.853 |   0.006  |   0.126  |  0.015  |
+|  0.015 |  0.831 |  0.143  |  0.011 |
+|  0.006 |   0.008 | 0.967 | 0.019 |
+|  0.006  |    0.009  |  0.275  | 0.710 |
+
+And using the balanced training, with the same experiment, we got at epoch 5:
+
+learning rate = 0.005
+
+This is the confusion matrix computer on testSet:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 8446 |  132  |  486  |  200  |
+|  499 | 17919 |  828  |  429 |
+|  3384 |  3678 | 120062 | 6384 |
+|  130  |   156  |  567  | 5774 |
+
+And this is a normalized version of this matrix:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 0.912 |   0.014  |   0.052  |  0.022  |
+|  0.023 |  0.913 |  0.042  |  0.022 |
+|  0.025 |   0.028 | 0.899 | 0.048 |
+|  0.020  |    0.023  |  0.086  | 0.871 |
 
 ##### 3.3. Results for VGG16
 
