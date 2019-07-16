@@ -207,6 +207,12 @@ And this is a normalized version of this matrix:
 
 ![alt text](data/vggface_train_bal.png "evolution of loss and accuracy during training")
 
+##### Result Summary
+
+![alt text](data/first_results_summary.png "evolution of loss and accuracy during training")
+
+As it was expected, on balanced batches, results are more balanced (not latin/caucasian specialised)
+
 #### 3. Best loss
 
 We tried to evaluate the networks for the epoch with the smallest loss on validation set to see the differences (the training is the same)
@@ -257,6 +263,27 @@ And this is a normalized version of this matrix:
 |  0.007 |   0.008 | 0.968 | 0.017 |
 |  0.018  |    0.011  |  0.271  | 0.700 |
 
+And using the balanced training, with the same experiment, we got at epoch 3:
+
+learning rate = 0.0005
+
+This is the confusion matrix computer on testSet:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 8600 |  89  |  475  |  100  |
+|  285 | 18196 |  853  |  291 |
+|  2115 |  2402 | 124207 | 4784 |
+|  96  |   92  |  579  | 5860 |
+
+And this is a normalized version of this matrix:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 0.928|   0.010  |   0.051  |  0.011  |
+|  0.015 |  0.927 |  0.043  |  0.015 |
+|  0.016 |   0.018 | 0.930 | 0.036 |
+|  0.014  |    0.014  |  0.087  | 0.884 |
 
 
 ##### 3.4. Results for VGGFace
