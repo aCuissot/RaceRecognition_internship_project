@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-f = open("data/nohup.out_resnet_balanced.txt", "r")
+f = open("data/nohup.out_mobilenet.txt", "r")
 acc = 0
 for x in f:
     if x.__contains__("31250/31250"):
