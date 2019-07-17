@@ -241,7 +241,7 @@ And this is a normalized version of this matrix:
 |  0.005 |   0.008 | 0.969 | 0.018 |
 |  0.012  |    0.011  |  0.299  | 0.698 |
 
-##### 3.1. Results for MobileNet
+##### 3.2. Results for MobileNet
 
 We used here the epoch 8
 

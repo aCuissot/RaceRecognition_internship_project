@@ -15,7 +15,7 @@ def makeList(str):
         acc_v += s[4][:7] + ','
     return loss, acc, loss_v, acc_v
 
-f = open("data/nohup.out_mobilenet_balanced.txt", "r")
+f = open("data/nohup.out_resnet_balanced.txt", "r")
 jaaj = 0
 array = ""
 for x in f:
@@ -68,7 +68,7 @@ print(av)
 # val_loss = [0.325, 0.2946, 0.2906, 0.3023, 0.3162, 0.3529, 0.3275, 0.3364, 0.3481]
 # val_acc = [0.9013, 0.9191, 0.9172, 0.9183, 0.9165, 0.9109, 0.9171, 0.9155, 0.9122]
 
-# for resnet blanced
+# for resnet balanced
 # loss = [0.3413, 0.2242, 0.189, 0.1673, 0.1531, 0.1426, 0.1306, 0.1258, 0.1227]
 # acc = [0.8755, 0.9197, 0.9323, 0.9401, 0.9453, 0.9492, 0.9534, 0.9551, 0.9562]
 # val_loss = [0.3537, 0.336, 0.3803, 0.3773, 0.4132, 0.4345, 0.4305, 0.4453, 0.4555]

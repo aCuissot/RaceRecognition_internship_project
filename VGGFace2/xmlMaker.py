@@ -3,7 +3,7 @@ import numpy as np
 import os
 import sys
 
-classesKeys = [ord("1"), ord("2"), ord("3"), ord("4"), ord("5"), ord("6")]
+classesKeys = [ord("1"), ord("2"), ord("3"), ord("4")]
 path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train"
 
 
@@ -40,14 +40,18 @@ def getMaxNumberPictureForSameId():
     return maxi
 
 
+
 # print(getMaxNumberPictureForSameId())  # 843 for training set, 761 for test => 843
 # and min = 87 for training set and 98 for test => 87
 folders = os.listdir(path)
-XML = open("Data/labels/trainLabels1.xml", "w+")
+XML = open("Data/labels/trainLabels.xml", "w+")
 XML.write("<xml>\n")
 
 print(len(folders))
-folders = folders[:200]
+startIndex = input("Index where you stopped last time")
+startIndex = int(startIndex)
+folders = folders[startIndex:]
+curr_index = startIndex
 for f in folders:
 
     folderPath = path + "\\" + f
@@ -63,10 +67,12 @@ for f in folders:
         if k in classesKeys:
             cat = classesKeys.index(k) + 1
             writeCategoryInXML(XML, f, cat)
+            curr_index += 1
             break
-        elif k == ord("q"):
+        elif k == ord("s"):
             XML.write("</xml>")
             XML.close()
+            print(curr_index)
             sys.exit()
         else:
             if index < len(images):
