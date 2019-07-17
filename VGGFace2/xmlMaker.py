@@ -44,7 +44,7 @@ def getMaxNumberPictureForSameId():
 # print(getMaxNumberPictureForSameId())  # 843 for training set, 761 for test => 843
 # and min = 87 for training set and 98 for test => 87
 folders = os.listdir(path)
-XML = open("Data/labels/trainLabels.xml", "w+")
+XML = open("Data/labels/testP.xml", "w+")
 XML.write("<xml>\n")
 
 print(len(folders))
