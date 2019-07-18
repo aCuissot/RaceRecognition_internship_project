@@ -1,6 +1,6 @@
-fileLabel1 = open("")
-fileLabel2 = open("")
-fileLabel3 = open("")
+fileLabel1 = open("Data/labels/testP.xml")
+fileLabel2 = open("Data/labels/test1.xml")
+fileLabel3 = open("Data/labels/test2.xml")
 txtLabel1 = fileLabel1.read()
 txtLabel2 = fileLabel2.read()
 txtLabel3 = fileLabel3.read()
@@ -70,10 +70,13 @@ def getFinalCategory(param, param1, param2):
         return param1
     return 6
 
-globalLabel = open("finalLabels.xml", 'w')
 
-txt = "<xml>"
+globalLabel = open("finalLabels.xml", 'w')
+globalLabel.write("<xml>")
 for i in range(len(array1)):
     curr_id = idList[i]
     finalCategory = getFinalCategory(array1[i], array2[i], array3[i])
     writeCategoryInXML(globalLabel, curr_id, finalCategory)
+globalLabel.write("</xml>")
+
+globalLabel.close()
