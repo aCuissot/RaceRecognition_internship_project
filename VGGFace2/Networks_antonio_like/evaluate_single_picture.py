@@ -60,7 +60,7 @@ if webcam:
 else:
     tmp_path = input(
         "If you want to use an image, place it in 'testUrImg' dir and give its name here, else just press enter and "
-        "you will use the default image")
+        "you will use the default image\n")
     if tmp_path != "":
         img_path = './testUrImg/' + tmp_path
         if img_path.__contains__("."):
@@ -71,7 +71,7 @@ else:
 
 network = input("Please choose the network to use ('vgg16', 'vggface', 'resnet', 'nasnet', or 'mobilenet'")
 checkpoint_loaded = input("Please choose the weights to load, must be in 'trained_networks' dir, default: the first "
-                          "weight with a name matching ith the network you chose previously")
+                          "weight with a name matching ith the network you chose previously\n")
 if checkpoint_loaded == "":
     folders = os.listdir("./trained_networks")
     for folder in folders:
@@ -80,6 +80,8 @@ if checkpoint_loaded == "":
             break
 if checkpoint_loaded == "":
     print("No trained model found")
+else :
+    print("Weights " + checkpoint_loaded + " loaded")
 # checkpoint have to be in 'trained_networks' directory
 
 num_class = 4
@@ -89,8 +91,7 @@ if network == "resnet" or network == "vgg16" or network == "vggface" or network 
 elif network == "nasnet":
     siz = 331
 else:
-    print("unknown network, please choose one in ['resnet', 'mobilenet', 'vgg16', 'vggface', 'nasnet']")
-
+    print("Unknown network, please choose one in ['resnet', 'mobilenet', 'vgg16', 'vggface', 'nasnet']")
 shape = (1, siz, siz, 3)
 
 
@@ -114,6 +115,8 @@ def decode_pred(pred):
 
 
 img_preprocessed, is_preprocessed = prepr.preprocessing_face_without_alignement(img_path)
+if not is_preprocessed:
+    print("Error during preprocessing, image does not exist or face not found")
 img_preprocessed = cv2.resize(img_preprocessed, shape[1:3])
 # learning rate schedule
 initial_learning_rate = 0.005  # we used 0.0005 for some trainings with vggface and vgg16
