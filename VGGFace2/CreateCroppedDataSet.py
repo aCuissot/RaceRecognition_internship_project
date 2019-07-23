@@ -1,3 +1,5 @@
+# This script detect face on images, crop face and add a padding
+
 import os
 import random
 import shutil
@@ -19,6 +21,10 @@ conf_threshold = 0.7
 
 
 def faceDetectionOnImg(img):
+    """
+    :param img: The given image
+    :return: the cropped face with padding and a boolean to know if face is correctly xtracted
+    """
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
     bboxes = detectFaceOpenCVDnn(img)
@@ -35,6 +41,11 @@ def faceDetectionOnImg(img):
 
 
 def getPrimarySquareSize(shape, bb):
+    """
+    :param shape: the shape of the image
+    :param bb: the detected face rectangle
+    :return: the size of the smallest square in the image containing the face
+    """
     maxBB = max(bb[2], bb[3])
     if maxBB > shape[0] or maxBB > shape[1]:
         return min(shape[0], shape[1])
@@ -43,6 +54,11 @@ def getPrimarySquareSize(shape, bb):
 
 
 def cropFaceWithPadding(img, faceDetected):
+    """
+    :param img: the image to crop
+    :param faceDetected: the face detected box
+    :return: a croped image containg the face
+    """
     # print(faceDetected)
     shape = img.shape
     # bb = csvBBGroundTruthTrain.loc[imgId, :]
@@ -61,6 +77,10 @@ def cropFaceWithPadding(img, faceDetected):
 
 
 def detectFaceOpenCVDnn(frame):
+    """
+    :param frame: the image  with a face
+    :return: the boxes of the face
+    """
     frameOpencvDnn = frame.copy()
     frameHeight = frameOpencvDnn.shape[0]
     frameWidth = frameOpencvDnn.shape[1]
@@ -85,6 +105,10 @@ def detectFaceOpenCVDnn(frame):
 
 
 def preprocess(img):
+    """
+    :param img: the image
+    :return: the cropped face if it's possible, else the input image, a boolean to check if all worked
+    """
     if img is not None:
         return faceDetectionOnImg(img)
     else:
@@ -92,6 +116,10 @@ def preprocess(img):
 
 
 def getId(list):
+    """
+    :param list: list of IDs and Ethnicities done by parseXML function
+    :return: The ID list contained in the input list
+    """
     sublist = []
     n = len(list)
     for i in range(0, n - 1, 2):
@@ -100,6 +128,10 @@ def getId(list):
 
 
 def getEthnicity(list):
+    """
+    :param list: list of IDs and Ethnicities done by parseXML function
+    :return: The ethnicities list contained in the input list
+    """
     sublist = []
     n = len(list)
     for i in range(1, n, 2):
@@ -108,6 +140,10 @@ def getEthnicity(list):
 
 
 def parseXML(xmlStr):
+    """
+    :param xmlStr: String containing the content of the XML file
+    :return: the IDs and ethnicities lists of the XML file
+    """
     xmlStr = xmlStr.replace("<xml>\n", "")
     xmlStr = xmlStr.replace("</xml>", "")
     xmlStr = xmlStr.replace("<subject>\n", "")
@@ -133,6 +169,10 @@ idData, ethnicityData = parseXML(content)
 
 
 def getCat(id):
+    """
+    :param id: the id
+    :return: the ethnicity as it will be used in the labeled dataset
+    """
     index = idData.index(id)
     return int(ethnicityData[index]) - 1
 
@@ -140,6 +180,10 @@ def getCat(id):
 index = 0
 
 total = 0
+
+# Here we read all the images of the set, preprocess them and create 2 new dataset:
+# One with the same structure than the original with the cropped faces
+# an other with a new structure: images are classified by label
 
 newPath = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\Faces_cropped_and_padded\\test"
 categorizedPath = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\Faces_labeled\\test"

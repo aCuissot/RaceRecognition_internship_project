@@ -1,3 +1,5 @@
+#This script create a dataset from the grountruth precomputed (GT = face + padding)
+
 import numpy as np
 import cv2
 

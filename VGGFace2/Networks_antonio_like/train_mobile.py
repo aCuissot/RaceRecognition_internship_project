@@ -102,7 +102,7 @@ if __name__ == '__main__':
 
     print("Training for %s is starting..." % dirnm)
 
-    # Carica i dataset
+    # Loading dataset
     val_dataset = '../Faces_labeled/test'
     train_size = 2000000  # IMPORTANT SET A VALUE!
     val_size = dataset_size(val_dataset)
@@ -140,7 +140,7 @@ if __name__ == '__main__':
         # y_pred = [1]*y_true.shape[0] # To try, it should give recall = 1
         conf = confusion_matrix(y_true, y_pred, [0, 1, 2, 3])
         print(conf)
-    """ nas_model_multitask.fit_generator(train_generator,
+    """ mobile_model_multitask.fit_generator(train_generator,
                                 steps_per_epoch=steps_per_epoch, epochs=epochs,
                                 verbose=1, callbacks=callbacks_list,
                                 validation_data=val_generator, validation_steps=validation_steps, initial_epoch=initial_epoch

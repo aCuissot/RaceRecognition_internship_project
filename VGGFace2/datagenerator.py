@@ -1,3 +1,5 @@
+# Trying to implement a datagenerator
+
 from keras.preprocessing.image import ImageDataGenerator
 from keras.applications.vgg16 import VGG16
 datagen = ImageDataGenerator()

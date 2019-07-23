@@ -1,3 +1,4 @@
+# Just a temporary way to have ids from txt file, no more used
 ids_file = open("Data/labels/homogeneousTrainSetIds.txt", "r")
 ids_txt = ids_file.read()
 ids_txt = ids_txt.replace("n", "")

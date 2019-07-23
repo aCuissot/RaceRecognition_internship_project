@@ -20,6 +20,8 @@
 #   via the command:
 #       pip install numpy
 
+# Using example dlib script to crop, align and add a padding to images
+
 import sys
 import dlib
 import cv2

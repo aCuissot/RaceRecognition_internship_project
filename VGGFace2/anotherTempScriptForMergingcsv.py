@@ -1,3 +1,6 @@
+# This script is merging some files containing data of an homogeneous set randomly
+# done previously into a single csv file
+
 file1 = open("Data/labels/homogeneousTestLabels.txt", "r")
 file2 = open("Data/labels/homogeneousTestImgs.txt", "r")
 file3 = open("Data/labels/homogeneousTestSetIds.txt", "r")

@@ -1,3 +1,5 @@
+# We will label 2 more times to avoid biased judgement on ethnicity, this script is to merge resulting XMLs
+
 fileLabel1 = open("Data/labels/testP.xml")
 fileLabel2 = open("Data/labels/test1.xml")
 fileLabel3 = open("Data/labels/test2.xml")
@@ -68,7 +70,9 @@ def getFinalCategory(param, param1, param2):
         return param
     if param2 == param1:
         return param1
+    # if there is 3 differents choices, we will decide later so 6 is a temporary category
     return 6
+
 
 
 globalLabel = open("finalLabels.xml", 'w')

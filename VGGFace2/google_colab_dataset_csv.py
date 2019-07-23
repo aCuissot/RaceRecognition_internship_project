@@ -1,9 +1,11 @@
+# Creating a csv file adapted to collab versio of the dataset
 import os
 import cv2 as cv
 
 path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train"
 
-def getImage(index, imgs, f):
+
+def getImagePath(index, imgs, f):
     imgPath = path + "\\" + f + "\\" + imgs[index]
     return imgPath
 
@@ -53,7 +55,7 @@ for f in folders:
     folderPath = path + "\\" + f
     images = os.listdir(folderPath)
     for img in images:
-        i = idData.index("<id>"+f+"</id>")
+        i = idData.index("<id>" + f + "</id>")
         # if int(ethnicityData[i])
         txt += f + '/' + img.split('.')[0] + ", " + ethnicityData[i] + "\n"
 
