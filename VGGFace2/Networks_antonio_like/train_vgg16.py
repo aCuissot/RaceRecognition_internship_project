@@ -28,7 +28,7 @@ batch_size = 4
 epochs = 20
 
 # learning rate schedule
-initial_learning_rate = 0.005
+initial_learning_rate = 0.0005
 learning_rate_decay_factor = 0.5
 learning_rate_decay_epochs = 6
 weight_decay = 5e-5
@@ -49,7 +49,8 @@ source_model = VGG16(include_top=False, input_shape=(shape[1], shape[2], shape[3
 source_model.summary()
 # source_model.load_weights('vgg16.75_96.h5')
 original_layers = [x.name for x in source_model.layers]
-x = source_model.get_layer('block5_conv3').output  # Last level of the original network, without dropout
+# x = source_model.get_layer('block5_conv3').output  # Last level of the original network, without dropout
+x = source_model.get_layer('block5_pool').output  # Last level of the original network, without dropout
 
 # Modify network
 # x = keras.layers.GlobalAveragePooling2D()(last_layer)

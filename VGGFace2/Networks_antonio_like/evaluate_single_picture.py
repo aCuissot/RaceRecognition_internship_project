@@ -80,7 +80,7 @@ if checkpoint_loaded == "":
             break
 if checkpoint_loaded == "":
     print("No trained model found")
-else :
+else:
     print("Weights " + checkpoint_loaded + " loaded")
 # checkpoint have to be in 'trained_networks' directory
 
@@ -317,4 +317,51 @@ if network == 'mobilenet':
         pred = model_multitask.predict(x)
         print(decode_pred(pred))
 
-# Nasnet is not Ready
+# Nasnet is not Ready (no train available => no test)
+
+if network == 'nasnet':
+    from keras.applications import NASNetLarge
+    import keras.applications.nasnet as nasnet
+
+    source_model = NASNetLarge(input_shape=(shape[1], shape[2], shape[3]), include_top=False, classes=4)
+    original_layers = [x.name for x in source_model.layers]
+    x = source_model.get_layer('normal_concat_18').output  # last level of the original network without dropout
+
+    # Modify the network
+    x = keras.layers.Dropout(0.5, name='dropout')(x)
+    x = keras.layers.Flatten()(x)
+    outS = x
+    outS = Dense(NUM_CLASSES, activation="softmax", name='outS')(outS)
+    model = Model(source_model.input, outS)
+    model_multitask = model
+
+    # based on the learning rate multipliers
+    for layer in model_multitask.layers:
+        layer.trainable = True
+    learning_rate_multipliers = {}
+    for layer_name in original_layers:
+        learning_rate_multipliers[layer_name] = MULTIPLIER_FOR_OLD_LAYERS
+    # added levels will have lr_multiplier = 1
+    new_layers = [x.name for x in source_model.layers if x.name not in original_layers]
+    for layer_name in new_layers:
+        learning_rate_multipliers[layer_name] = 1
+
+    # Prepare optimization with the lr_decay
+    from VGGFace2.Networks_antonio_like.training_tools import Adam_lr_mult
+
+    adam_with_lr_multipliers = Adam_lr_mult(lr=initial_learning_rate, decay=weight_decay,
+                                            multipliers=learning_rate_multipliers)
+    model_multitask.compile(adam_with_lr_multipliers,
+                            loss=['categorical_crossentropy'], metrics=['accuracy'])
+
+    # Evaluate
+    if is_preprocessed:
+        print("Evaluation for %s is starting..." % dirnm)
+
+        model_multitask.load_weights(dirnm + '/' + checkpoint_loaded)
+
+        x = image.img_to_array(img_preprocessed)
+        x = np.expand_dims(x, axis=0)
+        x = nasnet.preprocess_input(x)
+        pred = model_multitask.predict(x)
+        print(decode_pred(pred))

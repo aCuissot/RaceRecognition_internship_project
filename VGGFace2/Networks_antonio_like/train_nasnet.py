@@ -34,7 +34,7 @@ learning_rate_decay_epochs = 6
 weight_decay = 5e-5
 MULTIPLIER_FOR_OLD_LAYERS = 0.1
 
-siz = 96
+siz = 331
 
 dirnm = "exp-inp%d" % siz
 shape = (1, siz, siz, 3)
