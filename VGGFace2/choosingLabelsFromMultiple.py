@@ -16,7 +16,7 @@ if (len(array1) != len(array2)) or (len(array1) != len(array3)) or (len(array2) 
     print("lens are not matching")
 
 
-def getFinalCategory(param, param1, param2):
+def getFinalCategory(param, param1, param2, curr_id):
     if param == param1:
         return param
     if param == param2:
@@ -24,6 +24,7 @@ def getFinalCategory(param, param1, param2):
     if param2 == param1:
         return param1
     # if there is 3 differents choices, we will decide later so 6 is a temporary category
+    print(curr_id)
     return 6
 
 
@@ -31,7 +32,7 @@ globalLabel = open("finalTest.xml", 'w')
 globalLabel.write("<xml>")
 for i in range(len(array1)):
     curr_id = idList[i]
-    finalCategory = getFinalCategory(array1[i], array2[i], array3[i])
+    finalCategory = getFinalCategory(array1[i], array2[i], array3[i], curr_id)
     writeCategoryInXML(globalLabel, curr_id, finalCategory)
 globalLabel.write("</xml>")
 

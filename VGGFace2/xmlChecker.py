@@ -5,7 +5,7 @@ import sys
 from VGGFace2.utils.xmlParserFnct import *
 
 classesKeys = [ord("0"), ord("1")]
-path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train"
+path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\test"
 
 
 def getImage(index, imgs, f):
@@ -13,10 +13,10 @@ def getImage(index, imgs, f):
     return cv.imread(imgPath)
 
 
-category = 1
+category = 6
 
 folders = os.listdir(path)
-XML = open("Data/labels/TrainXML.xml", "r")
+XML = open("Data/labels/finalTest.xml", "r")
 content = XML.read()
 idData, ethnicityData = parseXML(content)
 
