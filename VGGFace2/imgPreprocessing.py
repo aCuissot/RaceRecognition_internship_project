@@ -1,9 +1,11 @@
+# A first croping script using groundtruth as face box, no detection here
 import os
 
 import cv2 as cv
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
+
 # import dlib
 
 TrainSetPath = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train"
@@ -82,6 +84,7 @@ def cropFace(img, imgId):
 
     # return out
     return img[topleft[1]:botright[1], topleft[0]:botright[0]]
+
 
 # for imgId in csvBBGroundTruthTrainIds:
 #     img = getImage(imgId)

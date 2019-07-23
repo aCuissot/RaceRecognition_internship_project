@@ -1,7 +1,8 @@
+# This script expand an id set to an image set linking each id to images
 import os
 
 
-def aaaaaaaaa(fileName, fileDestName):
+def id2imgs(fileName, fileDestName):
     file = open(fileName, "r")
     fileDst = open(fileDestName, "w")
     txt = file.read()
@@ -27,6 +28,7 @@ def getFileElementsList(file):
     return list
 
 
+# just to check if we did the job correctly
 def checker():
     idTrainList = getFileElementsList('Data/labels/homogeneousTrainSetIds.txt')
     id2check = getFileElementsList('Data/labels/homogeneousTrainImgs.txt')
@@ -44,5 +46,5 @@ def checker():
             print(List[i] + " " + idTrainList[i])
 
 
-# aaaaaaaaa("Data/labels/homogeneousTrainSetIds.txt", "Data/labels/homogeneousTrainImgs.txt")
+# id2imgs("Data/labels/homogeneousTrainSetIds.txt", "Data/labels/homogeneousTrainImgs.txt")
 checker()

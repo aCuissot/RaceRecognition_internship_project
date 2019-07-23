@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 import os
-import sys
+from VGGFace2.utils.xmlParserFnct import *
 
 classesKeys = [ord("0"), ord("1")]
 path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train"
@@ -12,40 +12,7 @@ def getImage(index, imgs, f):
     return cv.imread(imgPath)
 
 
-def getId(list):
-    sublist = []
-    n = len(list)
-    for i in range(0, n, 2):
-        sublist.append(list[i])
-    return sublist
-
-
-def getEthnicity(list):
-    sublist = []
-    n = len(list)
-    for i in range(1, n, 2):
-        sublist.append(list[i])
-    return sublist
-
-
-def parseXML(xmlStr):
-    xmlStr = xmlStr.replace("<xml>\n", "")
-    xmlStr = xmlStr.replace("</xml>", "")
-    xmlStr = xmlStr.replace("<subject>\n", "")
-    xmlStr = xmlStr.replace("</subject>\n", "")
-
-    xmlStr = xmlStr.replace("<curr_id>", "")
-    xmlStr = xmlStr.replace("<ethnicity>", "")
-    xmlStr = xmlStr.replace("</curr_id>", "")
-    xmlStr = xmlStr.replace("</ethnicity>", "")
-
-    list = xmlStr.split("\n")
-    id = getId(list)
-    ethnicity = getEthnicity(list)
-    return id, ethnicity
-
-
-category = 3
+category = 1
 
 folders = os.listdir(path)
 XML = open("Data/labels/TrainXML.xml", "r")
@@ -87,8 +54,8 @@ def showProportion(ethnicityData):
 
 
 # showProportion(ethnicityData)
-
-folders = folders[6000:7000]
+# folders = folders[6000:7000]
+print(idData)
 
 for f in folders:
 

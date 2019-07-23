@@ -1,4 +1,5 @@
 # We will label 2 more times to avoid biased judgement on ethnicity, this script is to merge resulting XMLs
+from VGGFace2.utils.xmlParserFnct import *
 
 fileLabel1 = open("Data/labels/testP.xml")
 fileLabel2 = open("Data/labels/test1.xml")
@@ -6,54 +7,6 @@ fileLabel3 = open("Data/labels/test2.xml")
 txtLabel1 = fileLabel1.read()
 txtLabel2 = fileLabel2.read()
 txtLabel3 = fileLabel3.read()
-
-
-def getId(list):
-    sublist = []
-    n = len(list)
-    for i in range(0, n, 2):
-        sublist.append(list[i])
-    return sublist
-
-
-def getEthnicity(list):
-    sublist = []
-    n = len(list)
-    for i in range(1, n, 2):
-        sublist.append(list[i])
-    return sublist
-
-
-def parseXML(xmlStr):
-    xmlStr = xmlStr.replace("<xml>\n", "")
-    xmlStr = xmlStr.replace("</xml>", "")
-    xmlStr = xmlStr.replace("<subject>\n", "")
-    xmlStr = xmlStr.replace("</subject>\n", "")
-
-    xmlStr = xmlStr.replace("<curr_id>", "")
-    xmlStr = xmlStr.replace("<ethnicity>", "")
-    xmlStr = xmlStr.replace("</curr_id>", "")
-    xmlStr = xmlStr.replace("</ethnicity>", "")
-
-    list = xmlStr.split("\n")
-    idList = getId(list)
-    ethnicity = getEthnicity(list)
-    return idList, ethnicity
-
-
-def writeCategoryInXML(file, name, cat):
-    file.write("<subject>\n")
-
-    file.write("<curr_id>")
-    file.write(str(name))
-    file.write("</curr_id>\n")
-
-    file.write("<ethnicity>")
-    file.write(str(cat))
-    file.write("</ethnicity>\n")
-
-    file.write("</subject>\n")
-
 
 idList, array1 = parseXML(txtLabel1)
 idList, array2 = parseXML(txtLabel2)
@@ -72,7 +25,6 @@ def getFinalCategory(param, param1, param2):
         return param1
     # if there is 3 differents choices, we will decide later so 6 is a temporary category
     return 6
-
 
 
 globalLabel = open("finalLabels.xml", 'w')

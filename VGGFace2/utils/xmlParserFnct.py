@@ -31,10 +31,10 @@ def parseXML(xmlStr):
     xmlStr = xmlStr.replace("</xml>", "")
     xmlStr = xmlStr.replace("<subject>\n", "")
     xmlStr = xmlStr.replace("</subject>\n", "")
-
-    xmlStr = xmlStr.replace("<curr_id>", "")
+# WARN  sometimes we got <id> and sometimes </curr_id>, TODO: solve that
+    xmlStr = xmlStr.replace("<id>", "")
     xmlStr = xmlStr.replace("<ethnicity>", "")
-    xmlStr = xmlStr.replace("</curr_id>", "")
+    xmlStr = xmlStr.replace("</id>", "")
     xmlStr = xmlStr.replace("</ethnicity>", "")
 
     list = xmlStr.split("\n")
@@ -43,11 +43,31 @@ def parseXML(xmlStr):
     return id, ethnicity
 
 
-def getEthIndex(line, ):
+def getEthIndex(line, sortedId):
     """
+    :param sortedId: a sorted ID list
     :param line: a line in the csv file
     :return: the index corresponding to this line
     """
     id = line.split(",")[0]
     index = sortedId.index(id)
     return index
+
+
+def writeCategoryInXML(file, name, cat):
+    """
+    :param file: file to write in
+    :param name: the ID
+    :param cat: the ethnicity
+    """
+    file.write("<subject>\n")
+
+    file.write("<id>")
+    file.write(str(name))
+    file.write("</id>\n")
+
+    file.write("<ethnicity>")
+    file.write(str(cat))
+    file.write("</ethnicity>\n")
+
+    file.write("</subject>\n")

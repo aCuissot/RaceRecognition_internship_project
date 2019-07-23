@@ -1,45 +1,8 @@
 import numpy as np
 import cv2
-
+from VGGFace2.utils.xmlParserFnct import *
 from tqdm import tqdm
-
 import os
-
-
-def getId(list):
-    sublist = []
-    n = len(list)
-    for i in range(0, n - 1, 2):
-        sublist.append(list[i])
-    return sublist
-
-
-def getEthnicity(list):
-    sublist = []
-    n = len(list)
-    for i in range(1, n, 2):
-        sublist.append(list[i])
-    return sublist
-
-
-def parseXML(xmlStr):
-    xmlStr = xmlStr.replace("<xml>\n", "")
-    xmlStr = xmlStr.replace("</xml>", "")
-    xmlStr = xmlStr.replace("<subject>\n", "")
-    xmlStr = xmlStr.replace("</subject>\n", "")
-    xmlStr = xmlStr.replace("</id>", "")
-    xmlStr = xmlStr.replace("<id>", "")
-
-    xmlStr = xmlStr.replace("<curr_id>", "")
-    xmlStr = xmlStr.replace("<ethnicity>", "")
-    xmlStr = xmlStr.replace("</curr_id>", "")
-    xmlStr = xmlStr.replace("</ethnicity>", "")
-
-    list = xmlStr.split("\n")
-    id = getId(list)
-    ethnicity = getEthnicity(list)
-    return id, ethnicity
-
 
 path = "/mnt/sdc1/acuissot/Faces_labeled/test"
 
