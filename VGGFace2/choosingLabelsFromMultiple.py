@@ -1,9 +1,9 @@
 # We will label 2 more times to avoid biased judgement on ethnicity, this script is to merge resulting XMLs
 from VGGFace2.utils.xmlParserFnct import *
 
-fileLabel1 = open("Data/labels/testP.xml")
-fileLabel2 = open("Data/labels/test1.xml")
-fileLabel3 = open("Data/labels/test2.xml")
+fileLabel1 = open("Data/labels/TestXML.xml")
+fileLabel2 = open("Data/labels_john/testLabels.xml")
+fileLabel3 = open("Data/labels_muhammad/testLabels.xml")
 txtLabel1 = fileLabel1.read()
 txtLabel2 = fileLabel2.read()
 txtLabel3 = fileLabel3.read()
@@ -27,7 +27,7 @@ def getFinalCategory(param, param1, param2):
     return 6
 
 
-globalLabel = open("finalLabels.xml", 'w')
+globalLabel = open("finalTest.xml", 'w')
 globalLabel.write("<xml>")
 for i in range(len(array1)):
     curr_id = idList[i]
