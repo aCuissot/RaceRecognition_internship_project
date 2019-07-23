@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 import os
+import sys
 from VGGFace2.utils.xmlParserFnct import *
 
 classesKeys = [ord("0"), ord("1")]
