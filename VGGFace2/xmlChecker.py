@@ -4,8 +4,8 @@ import os
 import sys
 from VGGFace2.utils.xmlParserFnct import *
 
-classesKeys = [ord("0"), ord("1")]
-path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\test"
+classesKeys = [ord("0"), ord("1"),  ord("2"),  ord("3")]
+path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train"
 
 
 def getImage(index, imgs, f):
@@ -16,7 +16,7 @@ def getImage(index, imgs, f):
 category = 6
 
 folders = os.listdir(path)
-XML = open("Data/labels/finalTest.xml", "r")
+XML = open("Data/labels/finalTrain.xml", "r")
 content = XML.read()
 idData, ethnicityData = parseXML(content)
 
@@ -55,7 +55,8 @@ def showProportion(ethnicityData):
 
 
 # showProportion(ethnicityData)
-# folders = folders[6000:7000]
+folders = folders[1000:]
+doc = open("labs_train.txt", "w")
 print(idData)
 
 for f in folders:
@@ -78,14 +79,15 @@ for f in folders:
 
             if k in classesKeys:
                 cat = classesKeys.index(k)
-                if cat == 1:
-                    print(f)
-                    newCat = cv.waitKey(0)
-                    print(newCat - 48)
+                print(f)
+                newCat = k
+                print(newCat - 48)
+                doc.write(f + " - " + str(newCat - 48) + "\n")
 
                 break
             elif k == ord("q"):
                 XML.close()
+                doc.close()
                 sys.exit()
             else:
                 if index < len(images):
@@ -96,3 +98,4 @@ for f in folders:
 
 cv.destroyAllWindows()
 XML.close()
+doc.close()

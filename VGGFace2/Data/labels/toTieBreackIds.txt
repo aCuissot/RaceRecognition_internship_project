@@ -1,23 +1,23 @@
 TRAIN PART:
-n000234
-n000253
-n000403
-n000586
-n000601
-n000671
-n000726
-n000745
-n000763
-n000816
-n000859
-n000933
-n001019
-n001317
-n001395
-n001571
-n001574
-n001852
-n002059
+n000234 - UK-Jamaica
+n000253 - Puerto Rico
+n000403 - UK
+n000586 - Sri Lanka
+n000601 - Surinam-Netherland
+n000671 - Germany-bit Irland
+n000726 - US
+n000745 - Inde
+n000763 - Japanese origin, livin US (maybe surgery)
+n000816 - Afghanistan
+n000859 - Iran
+n000933 - Iran
+n001019 - Turkey
+n001317 - Iran-Belgium
+n001395 - Nigeria-Scotland
+n001571 - Afro-american(bit native US and asian)-US
+n001574 - Brasil
+n001852 - Romania
+n002059 - Samoan-New Zealander
 n002172
 n002212
 n002416
