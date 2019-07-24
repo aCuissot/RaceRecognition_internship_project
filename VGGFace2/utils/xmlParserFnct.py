@@ -44,7 +44,7 @@ def parseXML(xmlStr):
 
 
 def getEthIndex(line, sortedId):
-    """
+    """²
     :param sortedId: a sorted ID list
     :param line: a line in the csv file
     :return: the index corresponding to this line
