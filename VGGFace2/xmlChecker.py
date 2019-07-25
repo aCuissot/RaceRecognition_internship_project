@@ -54,7 +54,7 @@ def showProportion(ethnicityData):
     print(tot)
 
 
-# showProportion(ethnicityData)
+showProportion(ethnicityData)
 folders = folders[1000:]
 doc = open("labs_train.txt", "w")
 print(idData)

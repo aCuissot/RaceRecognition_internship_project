@@ -1,0 +1,35 @@
+Let's see the composition of each label by images:
+Test:
+African   : 10373
+Asian     : 18750
+Caucasian : 130900
+Indian    : 9001
+
+Train:
+African   : 242783
+Asian     : 187893
+Caucasian : 2507837
+Indian    : 202205
+
+and by identities:
+Test:
+African   : 34
+Asian     : 62
+Caucasian : 380
+Indian    : 24
+
+Train:
+African   : 712
+Asian     : 533
+Caucasian : 6854
+Indian    : 530
+
+In test set:
+unanimity labels : 419
+2 same labels : 77
+to tiebreak : 4
+
+In train set: 
+unanimity labels : 7360
+2 same labels : 1201
+to tiebreak : 70
