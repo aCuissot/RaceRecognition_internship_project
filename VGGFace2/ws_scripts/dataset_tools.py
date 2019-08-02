@@ -50,8 +50,8 @@ def load_dataset(dirpath, shape, doShuffle=False, image_process_fcn=None):
     for i in range(num):
         #label = i%NUM_CLASSES
         label = training_distr[i % 64]
-        if doShuffle:
-            label = random.randint(0,NUM_CLASSES-2)
+        # if doShuffle:
+        #     label = random.randint(0,NUM_CLASSES-1)
 
         try:
             path = data[label][n[label]]
