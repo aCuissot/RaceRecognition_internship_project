@@ -1,5 +1,11 @@
 #!/usr/bin/python3
 
+"""
+Need to have saves of the model in ./trained_networks
+images to test should be in ./testUrImg
+"""
+
+
 import sys
 import os
 from glob import glob

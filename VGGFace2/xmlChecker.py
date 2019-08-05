@@ -4,7 +4,7 @@ import os
 import sys
 from VGGFace2.utils.xmlParserFnct import *
 
-classesKeys = [ord("0"), ord("1"),  ord("2"),  ord("3")]
+classesKeys = [ord("1"), ord("2"),  ord("3"),  ord("4")]
 path = "C:\\Users\\Cuissot\\PycharmProjects\\Data\\VGGFacesV2\\train"
 
 
@@ -55,7 +55,7 @@ def showProportion(ethnicityData):
 
 
 showProportion(ethnicityData)
-folders = folders[1000:]
+# folders = folders[1000:]
 doc = open("labs_train.txt", "w")
 print(idData)
 
@@ -82,7 +82,7 @@ for f in folders:
                 print(f)
                 newCat = k
                 print(newCat - 48)
-                doc.write(f + " - " + str(newCat - 48) + "\n")
+                doc.write(f + " -> " + str(newCat - 48) + "\n")
 
                 break
             elif k == ord("q"):

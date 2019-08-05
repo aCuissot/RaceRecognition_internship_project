@@ -358,3 +358,188 @@ And this is a normalized version of this matrix:
 |  0.008 |   0.008 | 0.962 | 0.022 |
 |  0.019  |    0.014  |  0.219  | 0.748 |
 
+#### 4. Relabeled dataset
+We asked to two persons from different ethnicties (John which is from Congo and Muhammad which is from Pakistan) to do annotations for the dataset to avoid a biased labelling. 
+
+We merged the three annotations using the following rules:
+
+1. For the same identity, if at least 2 annotations are the same, we keep this annotation
+2. If the three labels are different, we do a tie-break: a fourth annotator chose the labels of the identity 
+
+For all training we use now learning rate of 0.0005
+
+##### 4.1. Results for ResNet
+
+We trained on 20 epochs
+
+This is the confusion matrix computer on testSet:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 8450 |  67  | 1705   |  151  |
+|  119 | 16358 |  2040  |  233 |
+|  396 |  1049 | 127768 | 1687 |
+|  238  |   385  |  2290  | 6088 |
+
+And this is a normalized version of this matrix:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 0.815 |   0.006  |   0.164  |  0.015  |
+|  0.006 |  0.873 |  0.109  |  0.012 |
+|  0.003 |   0.008 | 0.976 | 0.013 |
+|  0.026  |    0.043  |  0.255  | 0.676 |
+
+accuracy = 0.9387069291934873
+
+And at the epoch 2 (with the lowest loss on the validation set):
+
+This is the confusion matrix computer on testSet:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 8311 |  55  |  1820  |  187  |
+|  208 | 15598 |  2633  |  311 |
+|  446 |  1002 | 127919 | 1533 |
+|  270  |   311  |  2479  | 5941 |
+
+And this is a normalized version of this matrix:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 0.801 |   0.005  |   0.176  |  0.018  |
+|  0.011 |  0.832 |  0.140  |  0.017 |
+|  0.003 |   0.008 | 0.977 | 0.012 |
+|  0.030  |    0.035  |  0.275  | 0.660 |
+
+##### 4.2. Results for MobileNet
+
+We trained on 13 epochs
+
+This is the confusion matrix computer on testSet:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 8078 |  112  |  2046   |  137  |
+|  213 | 15041 |  3245  |  251 |
+|  461 |  1116 | 127843 | 1480 |
+|  284  |   335  |  2921  | 5461 |
+
+And this is a normalized version of this matrix:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 0.779 |   0.011  |   0.197  |  0.013  |
+|  0.011 |  0.802 |  0.173  |  0.014 |
+|  0.003 |   0.009 | 0.977 | 0.011 |
+|  0.032  |    0.037  |  0.324  | 0.607 |
+
+And at the epoch 11 (with the lowest loss on the validation set):
+
+This is the confusion matrix computer on testSet:
+
+This is the confusion matrix computer on testSet:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 8078 |  112  |  2046   |  137  |
+|  213 | 15041 |  3245  |  251 |
+|  461 |  1116 | 127843 | 1480 |
+|  284  |   335  |  2921  | 5461 |
+
+And this is a normalized version of this matrix:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 0.779 |   0.011  |   0.197  |  0.013  |
+|  0.011 |  0.802 |  0.173  |  0.014 |
+|  0.003 |   0.009 | 0.977 | 0.011 |
+|  0.032  |    0.037  |  0.324  | 0.607 |
+
+##### 4.3. Results for VGG16
+
+We trained on 15 epochs
+
+This is the confusion matrix computer on testSet:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 8078 |  112  |  2046   |  137  |
+|  213 | 15041 |  3245  |  251 |
+|  461 |  1116 | 127843 | 1480 |
+|  284  |   335  |  2921  | 5461 |
+
+And this is a normalized version of this matrix:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 0.779 |   0.011  |   0.197  |  0.013  |
+|  0.011 |  0.802 |  0.173  |  0.014 |
+|  0.003 |   0.009 | 0.977 | 0.011 |
+|  0.032  |    0.037  |  0.324  | 0.607 |
+
+And at the epoch 11 (with the lowest loss on the validation set):
+
+This is the confusion matrix computer on testSet:
+
+This is the confusion matrix computer on testSet:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 8078 |  112  |  2046   |  137  |
+|  213 | 15041 |  3245  |  251 |
+|  461 |  1116 | 127843 | 1480 |
+|  284  |   335  |  2921  | 5461 |
+
+And this is a normalized version of this matrix:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 0.779 |   0.011  |   0.197  |  0.013  |
+|  0.011 |  0.802 |  0.173  |  0.014 |
+|  0.003 |   0.009 | 0.977 | 0.011 |
+|  0.032  |    0.037  |  0.324  | 0.607 |
+
+##### 4.4. Results for VGGFace
+
+We trained on 15 epochs
+
+This is the confusion matrix computer on testSet:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 8078 |  112  |  2046   |  137  |
+|  213 | 15041 |  3245  |  251 |
+|  461 |  1116 | 127843 | 1480 |
+|  284  |   335  |  2921  | 5461 |
+
+And this is a normalized version of this matrix:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 0.779 |   0.011  |   0.197  |  0.013  |
+|  0.011 |  0.802 |  0.173  |  0.014 |
+|  0.003 |   0.009 | 0.977 | 0.011 |
+|  0.032  |    0.037  |  0.324  | 0.607 |
+
+And at the epoch 11 (with the lowest loss on the validation set):
+
+This is the confusion matrix computer on testSet:
+
+This is the confusion matrix computer on testSet:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 8078 |  112  |  2046   |  137  |
+|  213 | 15041 |  3245  |  251 |
+|  461 |  1116 | 127843 | 1480 |
+|  284  |   335  |  2921  | 5461 |
+
+And this is a normalized version of this matrix:
+
+|      |       |        |      |
+|:----:|:-----:|:------:|:----:|
+| 0.779 |   0.011  |   0.197  |  0.013  |
+|  0.011 |  0.802 |  0.173  |  0.014 |
+|  0.003 |   0.009 | 0.977 | 0.011 |
+|  0.032  |    0.037  |  0.324  | 0.607 |
