@@ -412,6 +412,9 @@ And this is a normalized version of this matrix:
 |  0.003 |   0.008 | 0.977 | 0.012 |
 |  0.030  |    0.035  |  0.275  | 0.660 |
 
+![alt text](data/resnet_nds.png "evolution of loss and accuracy during training")
+
+
 ##### 4.2. Results for MobileNet
 
 We trained on 13 epochs
@@ -455,6 +458,9 @@ And this is a normalized version of this matrix:
 |  0.011 |  0.802 |  0.173  |  0.014 |
 |  0.003 |   0.009 | 0.977 | 0.011 |
 |  0.032  |    0.037  |  0.324  | 0.607 |
+
+![alt text](data/mobilenet_nds.png "evolution of loss and accuracy during training")
+
 
 ##### 4.3. Results for VGG16
 
@@ -502,6 +508,8 @@ And this is a normalized version of this matrix:
 |  0.003 |   0.009 | 0.974 | 0.014 |
 |  0.021  |    0.052  |  0.212  | 0.715 |
 
+![alt text](data/vgg16_nds.png "evolution of loss and accuracy during training")
+
 ##### 4.4. Results for VGGFace
 
 We trained on 15 epochs
@@ -547,3 +555,6 @@ And this is a normalized version of this matrix:
 |  0.027  |    0.045  |  0.224  | 0.704 |
 
 Accuracy = 0.9362161586520258
+
+![alt text](data/vggface_nds.png "evolution of loss and accuracy during training")
+
