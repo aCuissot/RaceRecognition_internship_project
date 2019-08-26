@@ -1,0 +1,10 @@
+96*96:
+Mobilenet batch time 0,08533
+Resnet batch time 0,10477
+VGG16 batch time 0,08468
+VGG Face batch time 0,08489
+224*224
+Mobilenet batch time 0,25769
+Resnet batch time 0,38443
+VGG16 batch time 0,41777
+VGG Face batch time 0,40858
