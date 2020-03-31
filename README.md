@@ -1,0 +1,1 @@
+This project is an internship research project. I have no more space on this repository and wanted refactor it cause architecture was not great so you can find a refactored version [here](https://github.com/aCuissot/RaceRecognitionRefactored)
